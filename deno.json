@@ -1,0 +1,15 @@
+{
+  "name": "@musodojo/enharmonic-note-selector",
+  "version": "0.1.0",
+  "license": "unlicense",
+  "exports": "./src/mod.ts",
+  "imports": {
+    "@musodojo/music-theory-data": "jsr:@musodojo/music-theory-data@^0.6.0"
+  },
+  "compilerOptions": {
+    "lib": ["dom", "dom.iterable", "dom.asynciterable", "deno.ns"]
+  },
+  "tasks": {
+    "bundle": "deno run -A bundle.ts"
+  }
+}
