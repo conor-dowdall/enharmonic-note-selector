@@ -1,25 +1,23 @@
-import * as esbuild from "https://deno.land/x/esbuild@v0.25.3/mod.js";
-import { denoPlugins } from "jsr:@duesabati/esbuild-deno-plugin";
+import * as esbuild from "npm:esbuild";
+import { denoPlugins } from "jsr:@luca/esbuild-deno-loader";
 
 async function bundle() {
   try {
-    const importMapURL = new URL("./deno.json", import.meta.url);
-
-    await esbuild.build({
+    const result = await esbuild.build({
+      plugins: [...denoPlugins()],
       entryPoints: ["./src/mod.ts"],
-      bundle: true,
       outfile: "./dist/bundle.js",
-      platform: "browser",
-      format: "esm",
-      sourcemap: true,
+      bundle: true,
       minify: true,
-      plugins: denoPlugins({
-        importMapURL: importMapURL.href,
-      }),
+      sourcemap: true,
+      format: "esm",
+      platform: "browser",
     });
-    console.log("\n\nBundling complete: created dist/bundle.js");
+
+    console.log(result, "\n");
+    console.log("🟢 Bundling complete: created dist/bundle.js");
   } catch (error) {
-    console.error("\n\nBundling failed:", error);
+    console.error("🔴 Bundling failed:", error);
   } finally {
     await esbuild.stop();
   }

@@ -4,13 +4,17 @@
     "jsr:@duesabati/esbuild-deno-plugin@*": "0.2.6",
     "jsr:@duesabati/esbuild-deno-plugin@^0.0.1": "0.0.1",
     "jsr:@duesabati/esbuild-deno-plugin@~0.2.6": "0.2.6",
+    "jsr:@luca/esbuild-deno-loader@*": "0.11.1",
     "jsr:@luca/esbuild-deno-loader@0.9": "0.9.0",
+    "jsr:@luca/esbuild-deno-loader@~0.11.1": "0.11.1",
     "jsr:@musodojo/music-theory-data@0.6": "0.6.0",
     "jsr:@oazmi/esbuild-plugin-deno@*": "0.4.1",
     "jsr:@oazmi/kitchensink@0.9.14": "0.9.14",
     "jsr:@std/assert@~0.213.1": "0.213.1",
+    "jsr:@std/bytes@^1.0.2": "1.0.5",
     "jsr:@std/encoding@0.213": "0.213.1",
     "jsr:@std/encoding@1.0.1": "1.0.1",
+    "jsr:@std/encoding@^1.0.5": "1.0.10",
     "jsr:@std/fs@1.0.1": "1.0.1",
     "jsr:@std/json@1": "1.0.2",
     "jsr:@std/json@~0.213.1": "0.213.1",
@@ -19,10 +23,13 @@
     "jsr:@std/path@0.213": "0.213.1",
     "jsr:@std/path@1.0.2": "1.0.2",
     "jsr:@std/path@^1.0.2": "1.0.2",
+    "jsr:@std/path@^1.0.6": "1.0.9",
     "npm:@types/node@*": "22.12.0",
+    "npm:esbuild@*": "0.20.2",
     "npm:esbuild@0.20": "0.20.2",
     "npm:esbuild@0.23.0": "0.23.0",
-    "npm:esbuild@0.25": "0.25.3"
+    "npm:esbuild@0.25": "0.25.3",
+    "npm:esbuild@0.25.3": "0.25.3"
   },
   "jsr": {
     "@duesabati/esbuild-deno-plugin@0.0.1": {
@@ -52,6 +59,14 @@
         "npm:esbuild@0.20"
       ]
     },
+    "@luca/esbuild-deno-loader@0.11.1": {
+      "integrity": "dc020d16d75b591f679f6b9288b10f38bdb4f24345edb2f5732affa1d9885267",
+      "dependencies": [
+        "jsr:@std/bytes",
+        "jsr:@std/encoding@^1.0.5",
+        "jsr:@std/path@^1.0.6"
+      ]
+    },
     "@musodojo/music-theory-data@0.6.0": {
       "integrity": "7f5da430a57457d5acc91890f31399e0990d624075c69e732a66b2c9e2cf6006"
     },
@@ -68,11 +83,17 @@
     "@std/assert@0.213.1": {
       "integrity": "24c28178b30c8e0782c18e8e94ea72b16282207569cdd10ffb9d1d26f2edebfe"
     },
+    "@std/bytes@1.0.5": {
+      "integrity": "4465dd739d7963d964c809202ebea6d5c6b8e3829ef25c6a224290fbb8a1021e"
+    },
     "@std/encoding@0.213.1": {
       "integrity": "fcbb6928713dde941a18ca5db88ca1544d0755ec8fb20fe61e2dc8144b390c62"
     },
     "@std/encoding@1.0.1": {
       "integrity": "5955c6c542ebb4ce6587c3b548dc71e07a6c27614f1976d1d3887b1196cf4e65"
+    },
+    "@std/encoding@1.0.10": {
+      "integrity": "8783c6384a2d13abd5e9e87a7ae0520a30e9f56aeeaa3bdf910a3eaaf5c811a1"
     },
     "@std/fs@1.0.1": {
       "integrity": "d6914ca2c21abe591f733b31dbe6331e446815e513e2451b3b9e472daddfefcb",
@@ -107,6 +128,9 @@
     },
     "@std/path@1.0.2": {
       "integrity": "a452174603f8c620bd278a380c596437a9eef50c891c64b85812f735245d9ec7"
+    },
+    "@std/path@1.0.9": {
+      "integrity": "260a49f11edd3db93dd38350bf9cd1b4d1366afa98e81b86167b4e3dd750129e"
     }
   },
   "npm": {
