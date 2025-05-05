@@ -32,8 +32,6 @@ enharmonicNoteSelectorTemplate.innerHTML = /* HTML */ `
   <button id="selectNoteButton"></button>
 
   <dialog id="selectNoteDialog">
-    <h3>Select a Note</h3>
-
     <div>
       ${enharmonicNotes
         .map((notes, index) =>
