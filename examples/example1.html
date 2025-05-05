@@ -13,17 +13,24 @@
     <script type="module" src="../dist/bundle.js"></script>
     <style>
       :root {
-        color-scheme: dark;
+        color-scheme: dark light;
       }
       enharmonic-note-selector {
         font-family: "Noto Music", sans-serif;
         font-weight: 400;
         font-style: normal;
+
+        font-size: 2rem;
       }
     </style>
   </head>
   <body>
-    <h3>Select a Note</h3>
-    <enharmonic-note-selector selected-note="D"></enharmonic-note-selector>
+    <h2>Select a Note</h2>
+    <enharmonic-note-selector></enharmonic-note-selector>
   </body>
+  <script>
+    document.body.addEventListener("enharmonic-note-selected", (event) => {
+      console.log("Selected note:", event.detail);
+    });
+  </script>
 </html>
