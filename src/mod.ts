@@ -6,48 +6,67 @@ import {
 const enharmonicNoteSelectorTemplate = document.createElement("template");
 enharmonicNoteSelectorTemplate.innerHTML = /* HTML */ `
   <style>
+    :host {
+      display: inline-block;
+      font-size: inherit;
+    }
+
     button {
+      width: 2em;
+      height: 2em;
+      margin: 0;
+      padding: 0;
       cursor: pointer;
       font: inherit;
+      border: none;
+      background: none;
+    }
+
+    #close-dialog-button {
+      display: block;
+      padding: 0.1em 0.5em;
+      margin-inline-start: auto;
     }
 
     dialog {
+      padding: 0.2em;
+    }
+
+    dialog::backdrop {
+      background: rgba(0, 0, 0, 0.5);
+    }
+
+    #enharmonic-note-buttons-div {
       text-align: center;
     }
 
-    .note-button {
-      margin-inline: 0.5em;
-    }
-
-    #cancelBtn {
-      margin-top: 1em;
-    }
-
-    #selectNoteButton {
-      border: none;
-      background-color: transparent;
+    hr {
+      margin-block: 0.1em;
     }
   </style>
 
-  <button id="selectNoteButton"></button>
+  <button id="note-selector-button"></button>
 
-  <dialog id="selectNoteDialog">
-    <div>
+  <dialog id="note-selector-dialog">
+    <button id="close-dialog-button">×</button>
+
+    <div id="enharmonic-note-buttons-div">
       ${enharmonicNotes
         .map((notes, index) =>
           notes
             .map(
-              (note) => `<button
-                class="note-button"
+              (note) => /* HTML */ `<button
+                class="enharmonic-note-button"
                 data-note-name="${note}"
-                data-pitch-integer="${index}">${note}</button>`
+                data-pitch-integer="${index}"
+              >
+                ${note}
+              </button>`
             )
             .join("")
         )
-        .join("<hr>")}
+        .join(/* HTML */ `<hr />`)}
     </div>
-
-    <button id="cancelBtn">Cancel</button>
   </dialog>
 `;
 
@@ -64,8 +83,9 @@ class EnharmonicNoteSelector extends HTMLElement {
   #shadowRoot: ShadowRoot;
   #selectedNoteName: string | null = null;
   #selectedPitchInteger: PitchInteger | null = null;
-  #selectNoteButton: HTMLButtonElement | null = null;
-  #selectNoteDialog: HTMLDialogElement | null = null;
+  #noteSelectorButton: HTMLButtonElement | null = null;
+  #noteSelectorDialog: HTMLDialogElement | null = null;
+  #abortController: AbortController | null = null;
 
   constructor() {
     super();
@@ -74,50 +94,72 @@ class EnharmonicNoteSelector extends HTMLElement {
       enharmonicNoteSelectorTemplate.content.cloneNode(true)
     );
 
-    this.#selectNoteButton = this.#shadowRoot.getElementById(
-      "selectNoteButton"
-    ) as HTMLButtonElement;
+    this.#noteSelectorButton =
+      this.#shadowRoot.querySelector<HTMLButtonElement>(
+        "#note-selector-button"
+      );
 
-    this.#selectNoteDialog = this.#shadowRoot.getElementById(
-      "selectNoteDialog"
-    ) as HTMLDialogElement;
+    this.#noteSelectorDialog =
+      this.#shadowRoot.querySelector<HTMLDialogElement>(
+        "#note-selector-dialog"
+      );
   }
 
   connectedCallback() {
-    if (this.#selectNoteButton && this.#selectNoteDialog) {
-      this.#selectNoteButton.addEventListener("click", () => {
-        this.#selectNoteDialog?.showModal();
-      });
+    this.#abortController = new AbortController();
+    const { signal } = this.#abortController;
 
-      const noteButtons = this.#shadowRoot.querySelectorAll(
-        ".note-button"
+    if (this.#noteSelectorButton && this.#noteSelectorDialog) {
+      this.#noteSelectorButton.addEventListener(
+        "click",
+        () => {
+          this.#noteSelectorDialog!.showModal();
+        },
+        { signal }
+      );
+
+      const enharmonicNoteButtons = this.#shadowRoot.querySelectorAll(
+        ".enharmonic-note-button"
       ) as NodeListOf<HTMLButtonElement>;
 
-      noteButtons.forEach((button) => {
-        button.addEventListener("click", () => {
-          this.#selectedNoteName = button.dataset.noteName || null;
+      enharmonicNoteButtons.forEach(
+        (button) => {
+          button.addEventListener("click", () => {
+            this.#selectedNoteName = button.dataset.noteName || null;
+            this.#selectedPitchInteger = button.dataset.pitchInteger
+              ? (parseInt(button.dataset.pitchInteger, 10) as PitchInteger)
+              : null;
+            this.#updateNoteSelectorButtonText();
+            this.#updateSelectedNoteAttribute();
+            this.#noteSelectorDialog!.close();
+            this.#dispatchNoteSelectedEvent();
+          });
+        },
+        { signal }
+      );
 
-          this.#selectedPitchInteger = button.dataset.pitchInteger
-            ? (parseInt(button.dataset.pitchInteger, 10) as PitchInteger)
-            : null;
-
-          this.#updateSelectNoteButtonText();
-          this.#updateAttribute();
-          this.#selectNoteDialog?.close();
-          this.#dispatchNoteSelectedEvent();
-        });
-      });
-
-      const cancelButton = this.#shadowRoot.getElementById(
-        "cancelBtn"
+      const closeDialogButton = this.#shadowRoot.getElementById(
+        "close-dialog-button"
       ) as HTMLButtonElement;
-      cancelButton.addEventListener("click", () => {
-        this.#selectNoteDialog?.close();
-      });
+      closeDialogButton.addEventListener(
+        "click",
+        () => {
+          this.#noteSelectorDialog!.close();
+        },
+        { signal }
+      );
 
-      this.#updateSelectNoteButtonText();
-      this.#updateAttribute();
+      this.#updateNoteSelectorButtonText();
+      this.#updateSelectedNoteAttribute();
+    } else {
+      console.error(
+        "Failed to find note-selector button element or dialog element"
+      );
     }
+  }
+
+  disconnectedCallback() {
+    this.#abortController?.abort();
   }
 
   attributeChangedCallback(
@@ -130,15 +172,16 @@ class EnharmonicNoteSelector extends HTMLElement {
     }
   }
 
-  #updateSelectNoteButtonText() {
-    if (this.#selectNoteButton) {
-      this.#selectNoteButton.textContent = this.#selectedNoteName
-        ? this.#selectedNoteName
-        : "-";
-    }
+  #updateNoteSelectorButtonText() {
+    this.#noteSelectorButton!.textContent = this.#selectedNoteName
+      ? this.#selectedNoteName
+      : "𝅘𝅥𝄙";
+    this.#noteSelectorButton!.ariaLabel = this.#selectedNoteName
+      ? `${this.#selectedNoteName} selected`
+      : "Select Note";
   }
 
-  #updateAttribute() {
+  #updateSelectedNoteAttribute() {
     if (this.#selectedNoteName) {
       this.setAttribute("selected-note", this.#selectedNoteName);
     } else {
@@ -171,16 +214,19 @@ class EnharmonicNoteSelector extends HTMLElement {
     this.#selectedNoteName = null;
     this.#selectedPitchInteger = null;
 
-    enharmonicNotes.forEach((group, index) => {
-      if (group.includes(newNote as string)) {
-        this.#selectedPitchInteger = index as PitchInteger;
+    if (newNote !== null) {
+      for (let i = 0; i < enharmonicNotes.length; i++) {
+        if (enharmonicNotes[i].includes(newNote)) {
+          this.#selectedPitchInteger = i as PitchInteger;
+          break; // Exit loop once found
+        }
       }
-    });
+      // If newNote is not found, selectedNoteName will remain null
+      if (this.#selectedPitchInteger !== null) this.#selectedNoteName = newNote;
+    }
 
-    if (this.#selectedPitchInteger !== null) this.#selectedNoteName = newNote;
-
-    this.#updateSelectNoteButtonText();
-    this.#updateAttribute();
+    this.#updateNoteSelectorButtonText();
+    this.#updateSelectedNoteAttribute();
   }
 
   get selectedPitchInteger(): PitchInteger | null {
