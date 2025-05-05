@@ -29,7 +29,8 @@
     "npm:esbuild@0.20": "0.20.2",
     "npm:esbuild@0.23.0": "0.23.0",
     "npm:esbuild@0.25": "0.25.3",
-    "npm:esbuild@0.25.3": "0.25.3"
+    "npm:esbuild@0.25.3": "0.25.3",
+    "npm:esbuild@~0.25.3": "0.25.3"
   },
   "jsr": {
     "@duesabati/esbuild-deno-plugin@0.0.1": {
@@ -701,7 +702,9 @@
   },
   "workspace": {
     "dependencies": [
-      "jsr:@musodojo/music-theory-data@0.6"
+      "jsr:@luca/esbuild-deno-loader@~0.11.1",
+      "jsr:@musodojo/music-theory-data@0.6",
+      "npm:esbuild@~0.25.3"
     ]
   }
 }

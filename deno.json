@@ -4,7 +4,9 @@
   "license": "unlicense",
   "exports": "./src/mod.ts",
   "imports": {
-    "@musodojo/music-theory-data": "jsr:@musodojo/music-theory-data@^0.6.0"
+    "@luca/esbuild-deno-loader": "jsr:@luca/esbuild-deno-loader@^0.11.1",
+    "@musodojo/music-theory-data": "jsr:@musodojo/music-theory-data@^0.6.0",
+    "esbuild": "npm:esbuild@^0.25.3"
   },
   "compilerOptions": {
     "lib": ["dom", "dom.iterable", "dom.asynciterable", "deno.ns"]
