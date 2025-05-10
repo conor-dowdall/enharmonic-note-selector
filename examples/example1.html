@@ -28,9 +28,20 @@
     <h2>Select a Note</h2>
     <enharmonic-note-selector></enharmonic-note-selector>
   </body>
-  <script>
-    document.body.addEventListener("enharmonic-note-selected", (event) => {
-      console.log("Selected note:", event.detail);
-    });
+  <script type="module">
+    document.body.addEventListener(
+      "enharmonic-note-selected",
+      (event) => {
+        console.log("Selected note:", event.detail);
+      },
+    );
+
+    const selector = document.querySelector("enharmonic-note-selector");
+
+    selector.noteColorTheme = "musoDojo";
+
+    setTimeout(() => {
+      selector.noteColorOffset = -2;
+    }, 5000);
   </script>
 </html>
