@@ -109,24 +109,21 @@ enharmonicNoteSelectorTemplate.innerHTML = /* HTML */ `
     <button id="close-dialog-button">×</button>
 
     <div id="enharmonic-note-buttons-div">
-      ${
-  enharmonicNotes
-    .map((notes, index) =>
-      notes
-        .map(
-          (note) =>
-            /* HTML */ `<button
+      ${enharmonicNotes
+        .map((notes, index) =>
+          notes
+            .map(
+              (note) => /* HTML */ `<button
                 class="enharmonic-note-button"
                 data-note-name="${note}"
                 data-pitch-integer="${index}"
               >
                 ${note}
-              </button>`,
+              </button>`
+            )
+            .join("")
         )
-        .join("")
-    )
-    .join(/* HTML */ `<hr />`)
-}
+        .join(/* HTML */ `<hr />`)}
     </div>
   </dialog>
 `;
@@ -154,20 +151,18 @@ class EnharmonicNoteSelector extends HTMLElement {
     super();
     this.#shadowRoot = this.attachShadow({ mode: "open" });
     this.#shadowRoot.appendChild(
-      enharmonicNoteSelectorTemplate.content.cloneNode(true),
+      enharmonicNoteSelectorTemplate.content.cloneNode(true)
     );
 
-    this.#noteSelectorButton = this.#shadowRoot.querySelector<
-      HTMLButtonElement
-    >(
-      "#note-selector-button",
-    );
+    this.#noteSelectorButton =
+      this.#shadowRoot.querySelector<HTMLButtonElement>(
+        "#note-selector-button"
+      );
 
-    this.#noteSelectorDialog = this.#shadowRoot.querySelector<
-      HTMLDialogElement
-    >(
-      "#note-selector-dialog",
-    );
+    this.#noteSelectorDialog =
+      this.#shadowRoot.querySelector<HTMLDialogElement>(
+        "#note-selector-dialog"
+      );
   }
 
   connectedCallback() {
@@ -180,11 +175,11 @@ class EnharmonicNoteSelector extends HTMLElement {
         () => {
           this.#noteSelectorDialog!.showModal();
         },
-        { signal },
+        { signal }
       );
 
       const enharmonicNoteButtons = this.#shadowRoot.querySelectorAll(
-        ".enharmonic-note-button",
+        ".enharmonic-note-button"
       ) as NodeListOf<HTMLButtonElement>;
 
       enharmonicNoteButtons.forEach((button) => {
@@ -200,26 +195,26 @@ class EnharmonicNoteSelector extends HTMLElement {
             this.#noteSelectorDialog!.close();
             this.#dispatchNoteSelectedEvent();
           },
-          { signal },
+          { signal }
         );
       });
 
       const closeDialogButton = this.#shadowRoot.getElementById(
-        "close-dialog-button",
+        "close-dialog-button"
       ) as HTMLButtonElement;
       closeDialogButton.addEventListener(
         "click",
         () => {
           this.#noteSelectorDialog!.close();
         },
-        { signal },
+        { signal }
       );
 
       this.#updateNoteSelectorButtonText();
       this.#updateSelectedNoteAttribute();
     } else {
       console.error(
-        "Failed to find note-selector button element or dialog element",
+        "Failed to find note-selector button element or dialog element"
       );
     }
   }
@@ -231,7 +226,7 @@ class EnharmonicNoteSelector extends HTMLElement {
   attributeChangedCallback(
     name: string,
     oldValue: string | null,
-    newValue: string | null,
+    newValue: string | null
   ) {
     if (oldValue === newValue) return;
     if (name === "selected-note") this.selectedNoteName = newValue;
@@ -265,8 +260,8 @@ class EnharmonicNoteSelector extends HTMLElement {
           },
           bubbles: true,
           composed: true,
-        },
-      ),
+        }
+      )
     );
   }
 
@@ -308,7 +303,7 @@ class EnharmonicNoteSelector extends HTMLElement {
       for (let i = 0; i < 12; i++) {
         this.style.setProperty(
           `--note-color-${(i + this.#noteColorOffset + 12) % 12}`,
-          noteColorThemes[themeName].colors[i],
+          noteColorThemes[themeName].colors[i]
         );
       }
     } else {
