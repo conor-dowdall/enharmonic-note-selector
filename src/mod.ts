@@ -1,12 +1,27 @@
 import {
   enharmonicNotes,
+  type PitchAlter,
   type PitchInteger,
 } from "@musodojo/music-theory-data";
+import { noteColorThemes } from "@musodojo/note-colors-data";
 
 const enharmonicNoteSelectorTemplate = document.createElement("template");
 enharmonicNoteSelectorTemplate.innerHTML = /* HTML */ `
   <style>
     :host {
+      --_note-color-0: var(--note-color-0, currentColor);
+      --_note-color-1: var(--note-color-1, currentColor);
+      --_note-color-2: var(--note-color-2, currentColor);
+      --_note-color-3: var(--note-color-3, currentColor);
+      --_note-color-4: var(--note-color-4, currentColor);
+      --_note-color-5: var(--note-color-5, currentColor);
+      --_note-color-6: var(--note-color-6, currentColor);
+      --_note-color-7: var(--note-color-7, currentColor);
+      --_note-color-8: var(--note-color-8, currentColor);
+      --_note-color-9: var(--note-color-9, currentColor);
+      --_note-color-10: var(--note-color-10, currentColor);
+      --_note-color-11: var(--note-color-11, currentColor);
+
       display: inline-block;
       font-size: inherit;
     }
@@ -40,6 +55,49 @@ enharmonicNoteSelectorTemplate.innerHTML = /* HTML */ `
       text-align: center;
     }
 
+    .enharmonic-note-button {
+      border-radius: 0.5em;
+      margin-inline: 0.1em;
+      border-width: 0.09em;
+      border-style: solid;
+      &[data-pitch-integer="0"] {
+        border-color: var(--_note-color-0);
+      }
+      &[data-pitch-integer="1"] {
+        border-color: var(--_note-color-1);
+      }
+      &[data-pitch-integer="2"] {
+        border-color: var(--_note-color-2);
+      }
+      &[data-pitch-integer="3"] {
+        border-color: var(--_note-color-3);
+      }
+      &[data-pitch-integer="4"] {
+        border-color: var(--_note-color-4);
+      }
+      &[data-pitch-integer="5"] {
+        border-color: var(--_note-color-5);
+      }
+      &[data-pitch-integer="6"] {
+        border-color: var(--_note-color-6);
+      }
+      &[data-pitch-integer="7"] {
+        border-color: var(--_note-color-7);
+      }
+      &[data-pitch-integer="8"] {
+        border-color: var(--_note-color-8);
+      }
+      &[data-pitch-integer="9"] {
+        border-color: var(--_note-color-9);
+      }
+      &[data-pitch-integer="10"] {
+        border-color: var(--_note-color-10);
+      }
+      &[data-pitch-integer="11"] {
+        border-color: var(--_note-color-11);
+      }
+    }
+
     hr {
       margin-block: 0.1em;
     }
@@ -51,21 +109,24 @@ enharmonicNoteSelectorTemplate.innerHTML = /* HTML */ `
     <button id="close-dialog-button">×</button>
 
     <div id="enharmonic-note-buttons-div">
-      ${enharmonicNotes
-        .map((notes, index) =>
-          notes
-            .map(
-              (note) => /* HTML */ `<button
+      ${
+  enharmonicNotes
+    .map((notes, index) =>
+      notes
+        .map(
+          (note) =>
+            /* HTML */ `<button
                 class="enharmonic-note-button"
                 data-note-name="${note}"
                 data-pitch-integer="${index}"
               >
                 ${note}
-              </button>`
-            )
-            .join("")
+              </button>`,
         )
-        .join(/* HTML */ `<hr />`)}
+        .join("")
+    )
+    .join(/* HTML */ `<hr />`)
+}
     </div>
   </dialog>
 `;
@@ -76,33 +137,37 @@ interface EnharmonicNoteSelectedEventDetail {
 }
 
 class EnharmonicNoteSelector extends HTMLElement {
-  static get observedAttributes(): string[] {
-    return ["selected-note"];
-  }
-
   #shadowRoot: ShadowRoot;
-  #selectedNoteName: string | null = null;
-  #selectedPitchInteger: PitchInteger | null = null;
   #noteSelectorButton: HTMLButtonElement | null = null;
   #noteSelectorDialog: HTMLDialogElement | null = null;
   #abortController: AbortController | null = null;
+  #selectedNoteName: string | null = null;
+  #selectedPitchInteger: PitchInteger | null = null;
+  #noteColorTheme: keyof typeof noteColorThemes | null = null;
+  #noteColorOffset: PitchAlter = 0;
+
+  static get observedAttributes(): string[] {
+    return ["selected-note"];
+  }
 
   constructor() {
     super();
     this.#shadowRoot = this.attachShadow({ mode: "open" });
     this.#shadowRoot.appendChild(
-      enharmonicNoteSelectorTemplate.content.cloneNode(true)
+      enharmonicNoteSelectorTemplate.content.cloneNode(true),
     );
 
-    this.#noteSelectorButton =
-      this.#shadowRoot.querySelector<HTMLButtonElement>(
-        "#note-selector-button"
-      );
+    this.#noteSelectorButton = this.#shadowRoot.querySelector<
+      HTMLButtonElement
+    >(
+      "#note-selector-button",
+    );
 
-    this.#noteSelectorDialog =
-      this.#shadowRoot.querySelector<HTMLDialogElement>(
-        "#note-selector-dialog"
-      );
+    this.#noteSelectorDialog = this.#shadowRoot.querySelector<
+      HTMLDialogElement
+    >(
+      "#note-selector-dialog",
+    );
   }
 
   connectedCallback() {
@@ -115,16 +180,17 @@ class EnharmonicNoteSelector extends HTMLElement {
         () => {
           this.#noteSelectorDialog!.showModal();
         },
-        { signal }
+        { signal },
       );
 
       const enharmonicNoteButtons = this.#shadowRoot.querySelectorAll(
-        ".enharmonic-note-button"
+        ".enharmonic-note-button",
       ) as NodeListOf<HTMLButtonElement>;
 
-      enharmonicNoteButtons.forEach(
-        (button) => {
-          button.addEventListener("click", () => {
+      enharmonicNoteButtons.forEach((button) => {
+        button.addEventListener(
+          "click",
+          () => {
             this.#selectedNoteName = button.dataset.noteName || null;
             this.#selectedPitchInteger = button.dataset.pitchInteger
               ? (parseInt(button.dataset.pitchInteger, 10) as PitchInteger)
@@ -133,27 +199,27 @@ class EnharmonicNoteSelector extends HTMLElement {
             this.#updateSelectedNoteAttribute();
             this.#noteSelectorDialog!.close();
             this.#dispatchNoteSelectedEvent();
-          });
-        },
-        { signal }
-      );
+          },
+          { signal },
+        );
+      });
 
       const closeDialogButton = this.#shadowRoot.getElementById(
-        "close-dialog-button"
+        "close-dialog-button",
       ) as HTMLButtonElement;
       closeDialogButton.addEventListener(
         "click",
         () => {
           this.#noteSelectorDialog!.close();
         },
-        { signal }
+        { signal },
       );
 
       this.#updateNoteSelectorButtonText();
       this.#updateSelectedNoteAttribute();
     } else {
       console.error(
-        "Failed to find note-selector button element or dialog element"
+        "Failed to find note-selector button element or dialog element",
       );
     }
   }
@@ -165,11 +231,10 @@ class EnharmonicNoteSelector extends HTMLElement {
   attributeChangedCallback(
     name: string,
     oldValue: string | null,
-    newValue: string | null
+    newValue: string | null,
   ) {
-    if (name === "selected-note" && oldValue !== newValue) {
-      this.selectedNoteName = newValue;
-    }
+    if (oldValue === newValue) return;
+    if (name === "selected-note") this.selectedNoteName = newValue;
   }
 
   #updateNoteSelectorButtonText() {
@@ -200,8 +265,8 @@ class EnharmonicNoteSelector extends HTMLElement {
           },
           bubbles: true,
           composed: true,
-        }
-      )
+        },
+      ),
     );
   }
 
@@ -231,6 +296,37 @@ class EnharmonicNoteSelector extends HTMLElement {
 
   get selectedPitchInteger(): PitchInteger | null {
     return this.#selectedPitchInteger;
+  }
+
+  get noteColorTheme(): keyof typeof noteColorThemes | null {
+    return this.#noteColorTheme;
+  }
+
+  set noteColorTheme(themeName: keyof typeof noteColorThemes | null) {
+    if (themeName && noteColorThemes[themeName]) {
+      this.#noteColorTheme = themeName;
+      for (let i = 0; i < 12; i++) {
+        this.style.setProperty(
+          `--note-color-${(i + this.#noteColorOffset + 12) % 12}`,
+          noteColorThemes[themeName].colors[i],
+        );
+      }
+    } else {
+      this.#noteColorTheme = null;
+      for (let i = 0; i < 12; i++) {
+        this.style.setProperty(`--note-color-${i}`, null);
+      }
+    }
+  }
+
+  get noteColorOffset(): PitchAlter {
+    return this.#noteColorOffset;
+  }
+
+  set noteColorOffset(offset: PitchAlter) {
+    this.#noteColorOffset = offset;
+    // reset the note color theme, if present
+    if (this.#noteColorTheme) this.noteColorTheme = this.#noteColorTheme;
   }
 }
 
