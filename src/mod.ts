@@ -1,6 +1,5 @@
 import {
   enharmonicNotes,
-  type PitchAlter,
   type PitchInteger,
 } from "@musodojo/music-theory-data";
 import { noteColorThemes } from "@musodojo/note-colors-data";
@@ -27,39 +26,18 @@ enharmonicNoteSelectorTemplate.innerHTML = /* HTML */ `
     }
 
     button {
+      font: inherit;
       width: 2em;
       height: 2em;
       margin: 0;
       padding: 0;
       cursor: pointer;
-      font: inherit;
-      border: none;
       background: none;
-    }
 
-    #close-dialog-button {
-      display: block;
-      padding: 0.1em 0.5em;
-      margin-inline-start: auto;
-    }
-
-    dialog {
-      padding: 0.2em;
-    }
-
-    dialog::backdrop {
-      background: rgba(0, 0, 0, 0.5);
-    }
-
-    #enharmonic-note-buttons-div {
-      text-align: center;
-    }
-
-    .enharmonic-note-button {
       border-radius: 0.5em;
-      margin-inline: 0.1em;
-      border-width: 0.09em;
+      border-width: 0.1em;
       border-style: solid;
+
       &[data-pitch-integer="0"] {
         border-color: var(--_note-color-0);
       }
@@ -96,6 +74,29 @@ enharmonicNoteSelectorTemplate.innerHTML = /* HTML */ `
       &[data-pitch-integer="11"] {
         border-color: var(--_note-color-11);
       }
+    }
+
+    #close-dialog-button {
+      display: block;
+      padding: 0.1em 0.5em;
+      border: none;
+      margin-inline-start: auto;
+    }
+
+    dialog {
+      padding: 0.2em;
+    }
+
+    dialog::backdrop {
+      background: rgba(0, 0, 0, 0.5);
+    }
+
+    #enharmonic-note-buttons-div {
+      text-align: center;
+    }
+
+    .enharmonic-note-button {
+      margin-inline: 0.1em;
     }
 
     hr {
@@ -141,7 +142,6 @@ class EnharmonicNoteSelector extends HTMLElement {
   #selectedNoteName: string | null = null;
   #selectedPitchInteger: PitchInteger | null = null;
   #noteColorTheme: keyof typeof noteColorThemes | null = null;
-  #noteColorOffset: PitchAlter = 0;
 
   static get observedAttributes(): string[] {
     return ["selected-note"];
@@ -236,6 +236,12 @@ class EnharmonicNoteSelector extends HTMLElement {
     this.#noteSelectorButton!.textContent = this.#selectedNoteName
       ? this.#selectedNoteName
       : "𝅘𝅥𝄙";
+    this.#selectedPitchInteger === null
+      ? this.#noteSelectorButton?.removeAttribute("data-pitch-integer")
+      : this.#noteSelectorButton?.setAttribute(
+          "data-pitch-integer",
+          this.#selectedPitchInteger.toString()
+        );
     this.#noteSelectorButton!.ariaLabel = this.#selectedNoteName
       ? `${this.#selectedNoteName} selected`
       : "Select Note";
@@ -302,7 +308,7 @@ class EnharmonicNoteSelector extends HTMLElement {
       this.#noteColorTheme = themeName;
       for (let i = 0; i < 12; i++) {
         this.style.setProperty(
-          `--note-color-${(i + this.#noteColorOffset + 12) % 12}`,
+          `--note-color-${i}`,
           noteColorThemes[themeName].colors[i]
         );
       }
@@ -312,16 +318,6 @@ class EnharmonicNoteSelector extends HTMLElement {
         this.style.setProperty(`--note-color-${i}`, null);
       }
     }
-  }
-
-  get noteColorOffset(): PitchAlter {
-    return this.#noteColorOffset;
-  }
-
-  set noteColorOffset(offset: PitchAlter) {
-    this.#noteColorOffset = offset;
-    // reset the note color theme, if present
-    if (this.#noteColorTheme) this.noteColorTheme = this.#noteColorTheme;
   }
 }
 
