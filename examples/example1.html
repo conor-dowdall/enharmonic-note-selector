@@ -24,9 +24,16 @@
     </style>
   </head>
   <body>
-    <h2>Select a Note</h2>
+    <h2>Select a Note / Color-Theme</h2>
+    <select name="color-themes" id="color-theme-select">
+      <option value="">No Color Theme</option>
+      <option value="musoDojo">Muso Dojo</option>
+      <option value="boomwhackers">Boomwhackers</option>
+      <option value="rootIsRed">Root is Red</option>
+    </select>
+    <br />
+    <br />
     <enharmonic-note-selector></enharmonic-note-selector>
-
     <script type="module" src="../dist/bundle.js"></script>
     <script type="module">
       document.body.addEventListener("enharmonic-note-selected", (event) => {
@@ -34,7 +41,11 @@
       });
 
       const selector = document.querySelector("enharmonic-note-selector");
-      selector.noteColorTheme = "musoDojo";
+      document
+        .getElementById("color-theme-select")
+        .addEventListener("change", (event) => {
+          selector.noteColorTheme = event.target.value;
+        });
     </script>
   </body>
 </html>

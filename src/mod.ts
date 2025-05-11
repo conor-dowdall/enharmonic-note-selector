@@ -1,3 +1,21 @@
+/**
+ * A custom HTML element that allows users to select an enharmonic note.
+ *
+ * Features:
+ * - Displays a button that, when clicked, opens a dialog.
+ * - The dialog shows all enharmonic equivalents for each pitch class.
+ * - Supports setting a note color theme via CSS custom properties.
+ * - Dispatches a custom event ('enharmonic-note-selected') when a note is selected.
+ * - Exposes 'selectedNoteName' and 'selectedPitchInteger' properties.
+ * - Supports setting the selected note via the 'selected-note-name' attribute on the element.
+ * - Uses CSS custom properties for theming.
+ *
+ * @example
+ * See examples/ directory for usage examples.
+ *
+ * @module enharmonic-note-selector
+ */
+
 import {
   enharmonicNotes,
   type PitchInteger,
@@ -144,7 +162,7 @@ class EnharmonicNoteSelector extends HTMLElement {
   #noteColorTheme: keyof typeof noteColorThemes | null = null;
 
   static get observedAttributes(): string[] {
-    return ["selected-note"];
+    return ["selected-note-name"];
   }
 
   constructor() {
@@ -229,7 +247,7 @@ class EnharmonicNoteSelector extends HTMLElement {
     newValue: string | null
   ) {
     if (oldValue === newValue) return;
-    if (name === "selected-note") this.selectedNoteName = newValue;
+    if (name === "selected-note-name") this.selectedNoteName = newValue;
   }
 
   #updateNoteSelectorButtonText() {
@@ -249,9 +267,9 @@ class EnharmonicNoteSelector extends HTMLElement {
 
   #updateSelectedNoteAttribute() {
     if (this.#selectedNoteName) {
-      this.setAttribute("selected-note", this.#selectedNoteName);
+      this.setAttribute("selected-note-name", this.#selectedNoteName);
     } else {
-      this.removeAttribute("selected-note");
+      this.removeAttribute("selected-note-name");
     }
   }
 
