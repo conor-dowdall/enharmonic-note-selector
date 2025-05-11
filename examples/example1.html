@@ -10,7 +10,6 @@
       href="https://fonts.googleapis.com/css2?family=Noto+Music&display=swap"
       rel="stylesheet"
     />
-    <script type="module" src="../dist/bundle.js"></script>
     <style>
       :root {
         color-scheme: dark light;
@@ -27,21 +26,15 @@
   <body>
     <h2>Select a Note</h2>
     <enharmonic-note-selector></enharmonic-note-selector>
-  </body>
-  <script type="module">
-    document.body.addEventListener(
-      "enharmonic-note-selected",
-      (event) => {
+
+    <script type="module" src="../dist/bundle.js"></script>
+    <script type="module">
+      document.body.addEventListener("enharmonic-note-selected", (event) => {
         console.log("Selected note:", event.detail);
-      },
-    );
+      });
 
-    const selector = document.querySelector("enharmonic-note-selector");
-
-    selector.noteColorTheme = "musoDojo";
-
-    setTimeout(() => {
-      selector.noteColorOffset = -2;
-    }, 5000);
-  </script>
+      const selector = document.querySelector("enharmonic-note-selector");
+      selector.noteColorTheme = "musoDojo";
+    </script>
+  </body>
 </html>
