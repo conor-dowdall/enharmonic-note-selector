@@ -1,12 +1,12 @@
 {
   "name": "@musodojo/enharmonic-note-selector",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "license": "unlicense",
   "exports": "./src/mod.ts",
   "imports": {
     "@luca/esbuild-deno-loader": "jsr:@luca/esbuild-deno-loader@^0.11.1",
     "@musodojo/music-theory-data": "jsr:@musodojo/music-theory-data@^0.6.1",
-    "@musodojo/note-colors-data": "jsr:@musodojo/note-colors-data@^0.3.0",
+    "@musodojo/note-colors-data": "jsr:@musodojo/note-colors-data@^0.3.1",
     "esbuild": "npm:esbuild@^0.25.4"
   },
   "compilerOptions": {
