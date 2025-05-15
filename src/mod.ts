@@ -20,7 +20,7 @@ import {
   enharmonicNotes,
   type PitchInteger,
 } from "@musodojo/music-theory-data";
-import { noteColorThemes } from "@musodojo/note-colors-data";
+import type { NoteColorGroup } from "@musodojo/note-colors-data";
 
 const enharmonicNoteSelectorTemplate = document.createElement("template");
 enharmonicNoteSelectorTemplate.innerHTML = /* HTML */ `
@@ -55,6 +55,7 @@ enharmonicNoteSelectorTemplate.innerHTML = /* HTML */ `
       border-radius: 0.5em;
       border-width: 0.1em;
       border-style: solid;
+      border-color: currentColor;
 
       &[data-pitch-integer="0"] {
         border-color: var(--_note-color-0);
@@ -159,7 +160,7 @@ class EnharmonicNoteSelector extends HTMLElement {
   #abortController: AbortController | null = null;
   #selectedNoteName: string | null = null;
   #selectedPitchInteger: PitchInteger | null = null;
-  #noteColorTheme: keyof typeof noteColorThemes | null = null;
+  #noteColorGroup: NoteColorGroup | null = null;
 
   static get observedAttributes(): string[] {
     return ["selected-note-name"];
@@ -317,21 +318,18 @@ class EnharmonicNoteSelector extends HTMLElement {
     return this.#selectedPitchInteger;
   }
 
-  get noteColorTheme(): keyof typeof noteColorThemes | null {
-    return this.#noteColorTheme;
+  get noteColorGroup(): NoteColorGroup | null {
+    return this.#noteColorGroup;
   }
 
-  set noteColorTheme(themeName: keyof typeof noteColorThemes | null) {
-    if (themeName && noteColorThemes[themeName]) {
-      this.#noteColorTheme = themeName;
+  set noteColorGroup(noteColorGroup: NoteColorGroup | null) {
+    if (noteColorGroup) {
+      this.#noteColorGroup = noteColorGroup;
       for (let i = 0; i < 12; i++) {
-        this.style.setProperty(
-          `--note-color-${i}`,
-          noteColorThemes[themeName].colors[i]
-        );
+        this.style.setProperty(`--note-color-${i}`, noteColorGroup[i]);
       }
     } else {
-      this.#noteColorTheme = null;
+      this.#noteColorGroup = null;
       for (let i = 0; i < 12; i++) {
         this.style.setProperty(`--note-color-${i}`, null);
       }
