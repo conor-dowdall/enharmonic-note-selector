@@ -103,7 +103,10 @@
       document
         .getElementById("color-theme-select")
         .addEventListener("change", (event) => {
-          selector.noteColorGroup = noteColorThemes[event.target.value].colors;
+          if (event.target.value)
+            selector.noteColorGroup =
+              noteColorThemes[event.target.value].colors;
+          else selector.noteColorGroup = null;
         });
     </script>
   </body>
