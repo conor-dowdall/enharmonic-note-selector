@@ -13,7 +13,7 @@
  * @example
  * See examples/ directory for usage examples.
  *
- * @module enharmonic-note-selector
+ * @module
  */
 
 import {
