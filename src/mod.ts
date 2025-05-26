@@ -148,7 +148,7 @@ enharmonicNoteSelectorTemplate.innerHTML = /* HTML */ `
   </dialog>
 `;
 
-interface EnharmonicNoteSelectedEventDetail {
+export interface EnharmonicNoteSelectedEventDetail {
   noteName: string | null;
   pitchInteger: PitchInteger | null;
 }
