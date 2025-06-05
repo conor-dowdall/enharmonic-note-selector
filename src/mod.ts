@@ -45,15 +45,14 @@ enharmonicNoteSelectorTemplate.innerHTML = /* HTML */ `
 
     button {
       font: inherit;
-      width: 2em;
-      height: 2em;
       margin: 0;
       padding: 0;
+      padding-inline: 0.5ch;
+      min-width: 4ch;
       cursor: pointer;
       background: none;
-
       border-radius: 0.5em;
-      border-width: 0.1em;
+      border-width: 0.05em;
       border-style: solid;
       border-color: currentColor;
 
@@ -95,6 +94,9 @@ enharmonicNoteSelectorTemplate.innerHTML = /* HTML */ `
       }
     }
 
+    #note-selector-button {
+    }
+
     #close-dialog-button {
       display: block;
       padding: 0.1em 0.5em;
@@ -103,7 +105,7 @@ enharmonicNoteSelectorTemplate.innerHTML = /* HTML */ `
     }
 
     dialog {
-      padding: 0.2em;
+      padding: 0.5em;
     }
 
     dialog::backdrop {
@@ -115,11 +117,11 @@ enharmonicNoteSelectorTemplate.innerHTML = /* HTML */ `
     }
 
     .enharmonic-note-button {
-      margin-inline: 0.1em;
+      margin-inline: 0.2em;
     }
 
     hr {
-      margin-block: 0.1em;
+      margin-block: 0.2em;
     }
   </style>
 
