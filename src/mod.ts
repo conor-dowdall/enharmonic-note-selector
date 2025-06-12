@@ -26,18 +26,18 @@ const enharmonicNoteSelectorTemplate = document.createElement("template");
 enharmonicNoteSelectorTemplate.innerHTML = /* HTML */ `
   <style>
     :host {
-      --_note-color-0: var(--note-color-0, currentColor);
-      --_note-color-1: var(--note-color-1, currentColor);
-      --_note-color-2: var(--note-color-2, currentColor);
-      --_note-color-3: var(--note-color-3, currentColor);
-      --_note-color-4: var(--note-color-4, currentColor);
-      --_note-color-5: var(--note-color-5, currentColor);
-      --_note-color-6: var(--note-color-6, currentColor);
-      --_note-color-7: var(--note-color-7, currentColor);
-      --_note-color-8: var(--note-color-8, currentColor);
-      --_note-color-9: var(--note-color-9, currentColor);
-      --_note-color-10: var(--note-color-10, currentColor);
-      --_note-color-11: var(--note-color-11, currentColor);
+      --_note-color-0: var(--note-color-0, transparent);
+      --_note-color-1: var(--note-color-1, transparent);
+      --_note-color-2: var(--note-color-2, transparent);
+      --_note-color-3: var(--note-color-3, transparent);
+      --_note-color-4: var(--note-color-4, transparent);
+      --_note-color-5: var(--note-color-5, transparent);
+      --_note-color-6: var(--note-color-6, transparent);
+      --_note-color-7: var(--note-color-7, transparent);
+      --_note-color-8: var(--note-color-8, transparent);
+      --_note-color-9: var(--note-color-9, transparent);
+      --_note-color-10: var(--note-color-10, transparent);
+      --_note-color-11: var(--note-color-11, transparent);
 
       display: inline-block;
       font-size: inherit;
@@ -47,50 +47,56 @@ enharmonicNoteSelectorTemplate.innerHTML = /* HTML */ `
       font: inherit;
       margin: 0;
       padding: 0;
-      padding-inline: 0.5ch;
-      min-width: 4ch;
       cursor: pointer;
       background: none;
-      border-radius: 0.5em;
-      border-width: 0.05em;
-      border-style: solid;
-      border-color: currentColor;
+      border: none;
+      box-sizing: border-box;
+    }
+
+    #note-selector-button {
+      width: 100%;
+      height: 100%;
+    }
+
+    #note-selector-button,
+    .enharmonic-note-button {
+      text-decoration: transparent underline solid 0.1em;
 
       &[data-pitch-integer="0"] {
-        border-color: var(--_note-color-0);
+        text-decoration-color: var(--_note-color-0);
       }
       &[data-pitch-integer="1"] {
-        border-color: var(--_note-color-1);
+        text-decoration-color: var(--_note-color-1);
       }
       &[data-pitch-integer="2"] {
-        border-color: var(--_note-color-2);
+        text-decoration-color: var(--_note-color-2);
       }
       &[data-pitch-integer="3"] {
-        border-color: var(--_note-color-3);
+        text-decoration-color: var(--_note-color-3);
       }
       &[data-pitch-integer="4"] {
-        border-color: var(--_note-color-4);
+        text-decoration-color: var(--_note-color-4);
       }
       &[data-pitch-integer="5"] {
-        border-color: var(--_note-color-5);
+        text-decoration-color: var(--_note-color-5);
       }
       &[data-pitch-integer="6"] {
-        border-color: var(--_note-color-6);
+        text-decoration-color: var(--_note-color-6);
       }
       &[data-pitch-integer="7"] {
-        border-color: var(--_note-color-7);
+        text-decoration-color: var(--_note-color-7);
       }
       &[data-pitch-integer="8"] {
-        border-color: var(--_note-color-8);
+        text-decoration-color: var(--_note-color-8);
       }
       &[data-pitch-integer="9"] {
-        border-color: var(--_note-color-9);
+        text-decoration-color: var(--_note-color-9);
       }
       &[data-pitch-integer="10"] {
-        border-color: var(--_note-color-10);
+        text-decoration-color: var(--_note-color-10);
       }
       &[data-pitch-integer="11"] {
-        border-color: var(--_note-color-11);
+        text-decoration-color: var(--_note-color-11);
       }
     }
 
@@ -114,7 +120,7 @@ enharmonicNoteSelectorTemplate.innerHTML = /* HTML */ `
     }
 
     .enharmonic-note-button {
-      margin-inline: 0.2em;
+      min-width: 3.5ch;
     }
 
     hr {
