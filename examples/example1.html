@@ -47,6 +47,9 @@
     </select>
     <br />
     <br />
+    <button id="random-button">Random Note</button>
+    <br />
+    <br />
     <enharmonic-note-selector></enharmonic-note-selector>
     <script type="module" src="../dist/bundle.js"></script>
     <script type="module">
@@ -127,6 +130,14 @@
               noteColorThemes[event.target.value].colors;
           } else selector.noteColorGroup = null;
         });
+
+      const noteSelector = document.querySelector(
+        "enharmonic-note-selector",
+      );
+      const randomButton = document.getElementById("random-button");
+      randomButton.addEventListener("click", () => {
+        noteSelector.setRandomNote();
+      });
     </script>
   </body>
 </html>
