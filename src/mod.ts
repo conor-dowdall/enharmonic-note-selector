@@ -27,11 +27,11 @@
  * @example
  * ```css
  * <style>
- * enharmonic-note-selector {
- *   --note-color-0: #FF0000;
- *   --note-color-1: #FFA500;
- *   ...
- * }
+ *   enharmonic-note-selector {
+ *     --note-color-0: #FF0000;
+ *     --note-color-1: #FFA500;
+ *     ...
+ *   }
  * </style>
  * ```
  *
@@ -369,7 +369,6 @@ class EnharmonicNoteSelector extends HTMLElement {
             this.#updateNoteSelectorButtonText();
             this.#updateSelectedNoteAttribute();
             this.#noteSelectorDialog!.close();
-            this.#dispatchNoteSelectedEvent();
           },
           { signal },
         );
@@ -408,7 +407,10 @@ class EnharmonicNoteSelector extends HTMLElement {
     newValue: string | null,
   ) {
     if (oldValue === newValue) return;
-    if (name === "selected-note-name") this.selectedNoteName = newValue;
+    if (name === "selected-note-name") {
+      this.selectedNoteName = newValue;
+      this.#dispatchNoteSelectedEvent();
+    }
   }
 
   /**
@@ -486,6 +488,8 @@ class EnharmonicNoteSelector extends HTMLElement {
    * If the provided note name is valid and found among enharmonic notes,
    * the component's state and display will update accordingly.
    * Invalid note names will result in the selection being cleared.
+   * Must be one of the enharmonic notes defined in `enharmonicNotes`, which does not
+   * include ascii accidentals like "C#" or "Db". Use "C♯", "D♭", etc.
    * @param {string | null} newNote - The new note name to set (e.g., "A", "B♭", "G♯").
    * @prop {string | null} selectedNoteName
    */
@@ -508,6 +512,15 @@ class EnharmonicNoteSelector extends HTMLElement {
 
     this.#updateNoteSelectorButtonText();
     this.#updateSelectedNoteAttribute();
+  }
+
+  setRandomNote() {
+    // Select a random note from the enharmonic notes
+    const randomIndex = Math.floor(Math.random() * enharmonicNotes.length);
+    const randomNote = enharmonicNotes[randomIndex][
+      Math.floor(Math.random() * enharmonicNotes[randomIndex].length)
+    ];
+    this.selectedNoteName = randomNote;
   }
 
   /**
