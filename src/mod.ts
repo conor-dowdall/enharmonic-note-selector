@@ -18,6 +18,8 @@
  * the selected note's name and pitch integer.
  * - **Attribute Synchronization:** Supports setting the initial selected note
  * via an HTML attribute.
+ * - **Random Selection:** Includes a public method to programmatically select a
+ * random note, useful for demonstrations or practice applications.
  *
  * @example
  * ```html

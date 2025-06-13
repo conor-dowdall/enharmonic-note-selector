@@ -3,9 +3,9 @@
 ## Description
 
 The `enharmonic-note-selector` is a custom HTML element that allows users to
-select an enharmonic note (e.g., "C#", "Db"). It displays a button which, when
-clicked, opens a dialog containing all possible enharmonic equivalents for each
-pitch.
+select an enharmonic note (e.g., "C", "D♯", "E♭"). It displays a button which,
+when clicked, opens a dialog containing all possible enharmonic equivalents for
+each pitch.
 
 ## Features
 
@@ -21,6 +21,8 @@ pitch.
   - `selectedPitchInteger` property: Gets the integer representation of the
     selected pitch (0-11).
   - `noteColorTheme` property: Sets a predefined color theme.
+- **Random Selection:** Includes a public method to programmatically select a
+  random note, useful for demonstrations or practice applications.
 
 ## Styling with CSS Custom Properties
 
