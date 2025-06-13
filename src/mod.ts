@@ -26,6 +26,11 @@ const enharmonicNoteSelectorTemplate = document.createElement("template");
 enharmonicNoteSelectorTemplate.innerHTML = /* HTML */ `
   <style>
     :host {
+      --_enharmonic-note-selector-padding: var(
+        --enharmonic-note-selector-padding,
+        0
+      );
+
       --_note-color-0: var(--note-color-0, transparent);
       --_note-color-1: var(--note-color-1, transparent);
       --_note-color-2: var(--note-color-2, transparent);
@@ -50,12 +55,12 @@ enharmonicNoteSelectorTemplate.innerHTML = /* HTML */ `
       cursor: pointer;
       background: none;
       border: none;
-      box-sizing: border-box;
     }
 
     #note-selector-button {
       width: 100%;
       height: 100%;
+      padding: var(--_enharmonic-note-selector-padding);
     }
 
     #note-selector-button,
