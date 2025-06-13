@@ -21,6 +21,20 @@
           "Helvetica Neue",
           sans-serif;
       }
+
+      enharmonic-note-selector {
+        font-size: 2em;
+        --enharmonic-note-selector-padding: 0.3em 1em;
+        border: 1px solid currentColor;
+        border-radius: 0.7em;
+        &:hover {
+          background-color: color-mix(
+            in srgb,
+            currentColor 20%,
+            transparent 80%
+          );
+        }
+      }
     </style>
   </head>
   <body>
