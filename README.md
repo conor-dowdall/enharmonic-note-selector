@@ -27,6 +27,26 @@ pitch.
 The component uses CSS custom properties to allow you to easily customize the
 colors of the note buttons. The following custom properties are available:
 
+### Padding
+
+- `--enharmonic-note-selector-padding`: Padding to be applied to the element.
+  Required so the inner button element remains clickable out to the edges of the
+  outer element.
+
+```css
+enharmonic-note-selector {
+  font-size: 2em;
+  --enharmonic-note-selector-padding: 0.3em 1em;
+  border: 1px solid currentColor;
+  border-radius: 0.7em;
+  &:hover {
+    background-color: color-mix(in srgb, currentColor 20%, transparent 80%);
+  }
+}
+```
+
+### Note Colors
+
 - `--note-color-0`: Color for pitch 0 (C)
 - `--note-color-1`: Color for pitch 1 (C#/Db)
 - `--note-color-2`: Color for pitch 2 (D)
