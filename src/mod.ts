@@ -20,32 +20,28 @@
  * via an HTML attribute.
  *
  * @example
- * * <enharmonic-note-selector selected-note-name="C♯"></enharmonic-note-selector>
+ * ```html
+ * <enharmonic-note-selector selected-note-name="C"></enharmonic-note-selector>
+ * ```
  *
  * @example
- * * <style>
+ * ```css
+ * <style>
  * enharmonic-note-selector {
- * --note-color-0: #FF0000;
- * --note-color-1: #FFA500;
- * ...
+ *   --note-color-0: #FF0000;
+ *   --note-color-1: #FFA500;
+ *   ...
  * }
  * </style>
- * <enharmonic-note-selector></enharmonic-note-selector>
- *
- * @example
- * * <script type="module">
- * const selector = document.querySelector('enharmonic-note-selector');
- * selector.addEventListener('enharmonic-note-selected', (event) => {
- * console.log('Selected Note:', event.detail.noteName);
- * console.log('Pitch Integer:', event.detail.pitchInteger);
- * });
- * </script>
+ * ```
  *
  * @module EnharmonicNoteSelector
  * @element enharmonic-note-selector
  * @fires EnharmonicNoteSelectedEvent
  * @attr {string} selected-note-name - The name of the currently selected note (e.g., "C", "D♯", "E♭").
- * @cssprop {<length>} [--enharmonic-note-selector-padding=0] - Controls the padding inside the primary note selection button, defining its clickable area.
+ * @cssprop {<length>} [--enharmonic-note-selector-padding=0] - Controls the padding inside the primary note selection button,
+ * which is included in its clickable area. The padding property may be specified using one, two, three, or four values.
+ * Each value is a <length> or a <percentage>. Negative values are invalid.
  * @cssprop {<color>} [--note-color-0=transparent] - Color for pitch integer 0 (C, B♯, D𝄫). Used for underline color.
  * @cssprop {<color>} [--note-color-1=transparent] - Color for pitch integer 1 (C♯, D♭). Used for underline color.
  * @cssprop {<color>} [--note-color-2=transparent] - Color for pitch integer 2 (D, C𝄪, E𝄫). Used for underline color.
