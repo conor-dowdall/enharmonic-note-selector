@@ -5,8 +5,8 @@
     "jsr:@duesabati/esbuild-deno-plugin@^0.0.1": "0.0.1",
     "jsr:@duesabati/esbuild-deno-plugin@~0.2.6": "0.2.6",
     "jsr:@luca/esbuild-deno-loader@0.9": "0.9.0",
-    "jsr:@musodojo/music-theory-data@^1.1.0": "1.1.0",
-    "jsr:@musodojo/note-colors-data@~0.3.1": "0.3.1",
+    "jsr:@musodojo/music-theory-data@2": "2.0.0",
+    "jsr:@musodojo/note-colors-data@1": "1.0.0",
     "jsr:@oazmi/esbuild-plugin-deno@*": "0.4.1",
     "jsr:@oazmi/kitchensink@0.9.14": "0.9.14",
     "jsr:@std/assert@~0.213.1": "0.213.1",
@@ -56,11 +56,11 @@
         "npm:esbuild@0.20"
       ]
     },
-    "@musodojo/music-theory-data@1.1.0": {
-      "integrity": "6174ec2e6c87a77a7980d2943d6b6399a9632a58aa7759ef084af740c584ff90"
+    "@musodojo/music-theory-data@2.0.0": {
+      "integrity": "3b1e02a2224d95e57234b53841aa644869d11e0942086d1d54afa9453ed0793b"
     },
-    "@musodojo/note-colors-data@0.3.1": {
-      "integrity": "e727d023fca3c7b3522115c7751b10cec5e34a29e55d162f396b9f29e95760bc"
+    "@musodojo/note-colors-data@1.0.0": {
+      "integrity": "c560564e937725d3cf09855a7a2d167c974e93ab85d50c1c8aee537986525ca5"
     },
     "@oazmi/esbuild-plugin-deno@0.4.1": {
       "integrity": "be5c1245c80d7780e6514ee2979b05065c2d2403da23aa0e27cb3fe056405c71",
@@ -934,8 +934,8 @@
   },
   "workspace": {
     "dependencies": [
-      "jsr:@musodojo/music-theory-data@^1.1.0",
-      "jsr:@musodojo/note-colors-data@~0.3.1"
+      "jsr:@musodojo/music-theory-data@2",
+      "jsr:@musodojo/note-colors-data@1"
     ]
   }
 }
