@@ -1,0 +1,16 @@
+{
+  "version": "5",
+  "specifiers": {
+    "jsr:@musodojo/music-theory-data@11": "11.0.0"
+  },
+  "jsr": {
+    "@musodojo/music-theory-data@11.0.0": {
+      "integrity": "a4deb0a6240ca583e859aab373856fabd386f1c26f253b7a1001ee74973deb1e"
+    }
+  },
+  "workspace": {
+    "dependencies": [
+      "jsr:@musodojo/music-theory-data@11"
+    ]
+  }
+}
