@@ -28,24 +28,24 @@ each pitch.
 
 ## Styling with CSS Custom Properties
 
-The component uses CSS custom properties to allow you to easily customize the
-colors of the note buttons. The following custom properties are available:
+The component can be styled using a combination of standard CSS, CSS Shadow
+Parts for the main button, and CSS custom properties for note colors.
 
-### Padding
+### Sizing and Padding using `::part()`
 
-- `--enharmonic-note-selector-padding`: Padding to be applied to the element.
-  Required so the inner button element remains clickable out to the edges of the
-  outer element.
+The main button inside the component is exposed via a shadow part named
+`button`. This allows you to directly style its padding, font, and other
+properties from your global stylesheet. This is the recommended way to control
+the component's size and internal spacing.
 
 ```css
 enharmonic-note-selector {
   font-size: 2em;
-  --enharmonic-note-selector-padding: 0.3em 1em;
   border: 1px solid currentColor;
   border-radius: 0.7em;
-  &:hover {
-    background-color: color-mix(in srgb, currentColor 20%, transparent 80%);
-  }
+}
+enharmonic-note-selector::part(button) {
+  padding: 0.3em 1em;
 }
 ```
 

@@ -14,17 +14,18 @@
           sans-serif;
       }
 
-      enharmonic-note-selector {
-        --enharmonic-note-selector-padding: 0.3em 1em;
+      enharmonic-note-selector::part(button) {
         border: 1px solid currentColor;
-        border-radius: 0.7em;
-        &:hover {
-          background-color: color-mix(
-            in srgb,
-            currentColor 20%,
-            transparent 80%
-          );
-        }
+        border-radius: 0.6em;
+        padding: 0.3em 1em;
+      }
+
+      enharmonic-note-selector::part(button):hover {
+        background-color: color-mix(
+          in srgb,
+          currentColor 20%,
+          transparent 80%
+        );
       }
     </style>
   </head>
