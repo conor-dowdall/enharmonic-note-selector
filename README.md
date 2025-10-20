@@ -21,6 +21,8 @@ each pitch.
   - `selectedPitchInteger` property: Gets the integer representation of the
     selected pitch (0-11).
   - `noteColorTheme` property: Sets a predefined color theme.
+  - `root-notes-only` attribute: A boolean attribute that, when present,
+    restricts the selection to only standard root notes.
 - **Random Selection:** Includes a public method to programmatically select a
   random note, useful for demonstrations or practice applications.
 

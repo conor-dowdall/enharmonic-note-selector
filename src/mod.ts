@@ -29,9 +29,9 @@
 import {
   type ColorGroup,
   enharmonicNoteNameGroups,
-  type NoteInteger,
+  enharmonicRootNoteGroups,
   type NoteName,
-  rootNotes,
+  type RootNoteInteger,
 } from "@musodojo/music-theory-data";
 
 const enharmonicNoteSelectorTemplate = document.createElement("template");
@@ -155,32 +155,14 @@ enharmonicNoteSelectorTemplate.innerHTML = /* HTML */ `
     <button id="close-dialog-button">×</button>
 
     <div id="enharmonic-note-buttons-div">
-      ${
-  enharmonicNoteNameGroups
-    .map((notes, index) =>
-      notes
-        .filter((note) => (rootNotes as readonly string[]).includes(note))
-        .map(
-          (note) =>
-            /* HTML */ `<button
-                class="enharmonic-note-button"
-                data-note-name="${note}"
-                data-note-integer="${index}"
-              >
-                ${note}
-              </button>`,
-        )
-        .join("")
-    )
-    .join(/* HTML */ `<hr />`)
-}
+      <!-- the buttons in here are dynamically generated in connectedCallback -->
     </div>
   </dialog>
 `;
 
 export interface EnharmonicNoteSelectedEventDetail {
   noteName: string;
-  noteInteger: NoteInteger;
+  noteInteger: RootNoteInteger;
 }
 
 export class EnharmonicNoteSelector extends HTMLElement {
@@ -189,7 +171,7 @@ export class EnharmonicNoteSelector extends HTMLElement {
   #noteSelectorDialog: HTMLDialogElement | null = null;
   #abortController: AbortController | null = null;
   #selectedNoteName: string | null = null;
-  #selectedNoteInteger: NoteInteger | null = null;
+  #selectedNoteInteger: RootNoteInteger | null = null;
   #noteColorGroup: ColorGroup | null = null;
 
   static get observedAttributes(): string[] {
@@ -217,6 +199,8 @@ export class EnharmonicNoteSelector extends HTMLElement {
   }
 
   connectedCallback() {
+    this.#buildDialog();
+
     this.#abortController = new AbortController();
     const { signal } = this.#abortController;
 
@@ -229,25 +213,25 @@ export class EnharmonicNoteSelector extends HTMLElement {
         { signal },
       );
 
-      const enharmonicNoteButtons = this.#shadowRoot.querySelectorAll(
-        ".enharmonic-note-button",
-      ) as NodeListOf<HTMLButtonElement>;
-
-      enharmonicNoteButtons.forEach((button) => {
-        button.addEventListener(
-          "click",
-          () => {
-            this.#selectedNoteName = button.dataset.noteName || null;
-            this.#selectedNoteInteger = button.dataset.noteInteger
-              ? (parseInt(button.dataset.noteInteger, 10) as NoteInteger)
-              : null;
-            this.#updateNoteSelectorButtonText();
-            this.#updateSelectedNoteAttribute();
-            this.#noteSelectorDialog!.close();
-          },
-          { signal },
+      const buttonsDiv = this.#shadowRoot.getElementById(
+        "enharmonic-note-buttons-div",
+      );
+      buttonsDiv?.addEventListener("click", (event) => {
+        const target = event.target as HTMLElement;
+        const button = target.closest<HTMLButtonElement>(
+          ".enharmonic-note-button",
         );
-      });
+        if (button) {
+          this.#selectedNoteName = button.dataset.noteName || null;
+          this.#selectedNoteInteger = button.dataset.noteInteger
+            ? (parseInt(button.dataset.noteInteger, 10) as RootNoteInteger)
+            : null;
+          this.#updateNoteSelectorButtonText();
+          this.#updateSelectedNoteAttribute();
+          this.#noteSelectorDialog!.close();
+          this.#dispatchNoteSelectedEvent();
+        }
+      }, { signal });
 
       const closeDialogButton = this.#shadowRoot.getElementById(
         "close-dialog-button",
@@ -269,6 +253,35 @@ export class EnharmonicNoteSelector extends HTMLElement {
     }
   }
 
+  #buildDialog() {
+    const noteGroups = this.hasAttribute("root-notes-only")
+      ? enharmonicRootNoteGroups
+      : enharmonicNoteNameGroups;
+
+    const buttonsHtml = noteGroups
+      .map((notes, index) =>
+        notes
+          .map(
+            (note) =>
+              /* HTML */ `<button
+                  class="enharmonic-note-button"
+                  data-note-name="${note}"
+                  data-note-integer="${index}"
+                >
+                  ${note}
+                </button>`,
+          )
+          .join("")
+      )
+      .join(/* HTML */ `<hr />`);
+
+    const container = this.#shadowRoot.getElementById(
+      "enharmonic-note-buttons-div",
+    );
+    if (container) {
+      container.innerHTML = buttonsHtml;
+    }
+  }
   disconnectedCallback() {
     this.#abortController?.abort();
   }
@@ -279,9 +292,8 @@ export class EnharmonicNoteSelector extends HTMLElement {
     newValue: string | null,
   ) {
     if (oldValue === newValue) return;
-    if (name === "selected-note-name") {
+    if (name === "selected-note-name" && newValue !== this.selectedNoteName) {
       this.selectedNoteName = newValue;
-      this.#dispatchNoteSelectedEvent();
     }
   }
 
@@ -351,7 +363,7 @@ export class EnharmonicNoteSelector extends HTMLElement {
       // Find the note integer for the given note name
       for (let i = 0; i < enharmonicNoteNameGroups.length; i++) {
         if (enharmonicNoteNameGroups[i].includes(newNote as NoteName)) {
-          this.#selectedNoteInteger = i as NoteInteger;
+          this.#selectedNoteInteger = i as RootNoteInteger;
           break; // Exit loop once found
         }
       }
@@ -361,20 +373,22 @@ export class EnharmonicNoteSelector extends HTMLElement {
 
     this.#updateNoteSelectorButtonText();
     this.#updateSelectedNoteAttribute();
+    this.#dispatchNoteSelectedEvent();
   }
 
   setRandomNote() {
-    // Select a random note from the enharmonic note groups
-    const randomIndex = Math.floor(
-      Math.random() * enharmonicNoteNameGroups.length,
-    );
-    const randomNote = enharmonicNoteNameGroups[randomIndex][
-      Math.floor(Math.random() * enharmonicNoteNameGroups[randomIndex].length)
+    const noteGroups = this.hasAttribute("root-notes-only")
+      ? enharmonicRootNoteGroups
+      : enharmonicNoteNameGroups;
+
+    const randomIndex = Math.floor(Math.random() * noteGroups.length);
+    const randomNote = noteGroups[randomIndex][
+      Math.floor(Math.random() * noteGroups[randomIndex].length)
     ];
     this.selectedNoteName = randomNote;
   }
 
-  get selectedNoteInteger(): NoteInteger | null {
+  get selectedNoteInteger(): RootNoteInteger | null {
     return this.#selectedNoteInteger;
   }
 
