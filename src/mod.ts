@@ -72,10 +72,16 @@ enharmonicNoteSelectorTemplate.innerHTML = /* HTML */ `
       display: grid;
       place-items: center;
 
-      > * {
-        grid-area: 1 / 1;
-        width: 2.5ch;
+      > slot {
         height: 2.5ch;
+      }
+
+      ::slotted(svg),
+      ::slotted(img),
+      > slot > svg {
+        grid-area: 1 / 1;
+        width: 2.5ch; /* Sizing for icons */
+        height: 2.5ch; /* Sizing for icons */
       }
     }
 
@@ -130,7 +136,8 @@ enharmonicNoteSelectorTemplate.innerHTML = /* HTML */ `
         border: none;
         margin-inline-start: auto;
 
-        > slot > * {
+        > slot > svg,
+        > slot > img {
           width: 2ch;
           height: 2ch;
         }
