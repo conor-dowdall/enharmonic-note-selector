@@ -64,6 +64,10 @@ enharmonicNoteSelectorTemplate.innerHTML = /* HTML */ `
       border: none;
     }
 
+    svg {
+      fill: currentColor;
+    }
+
     #main-button {
       display: grid;
       place-items: center;
@@ -118,19 +122,23 @@ enharmonicNoteSelectorTemplate.innerHTML = /* HTML */ `
     }
 
     dialog {
-      font-size: 1.2em;
       padding: 0.5em;
+
+      > #close-dialog-button {
+        display: block;
+        padding: 0.1em 0.5em;
+        border: none;
+        margin-inline-start: auto;
+
+        > slot > * {
+          width: 2ch;
+          height: 2ch;
+        }
+      }
     }
 
     dialog::backdrop {
       background: rgba(0, 0, 0, 0.5);
-    }
-
-    #close-dialog-button {
-      display: block;
-      padding: 0.1em 0.5em;
-      border: none;
-      margin-inline-start: auto;
     }
 
     .visually-hidden {
@@ -167,38 +175,29 @@ enharmonicNoteSelectorTemplate.innerHTML = /* HTML */ `
   <button id="main-button" part="main-button">
     <span id="selected-note-name-span" style="display: none;"></span>
     <slot>
-      <!-- 
-        Default icon when no note is selected. Can be overridden by the user.
-        This SVG is part of the project and is licensed under CC0 1.0 Universal.
-      -->
-      <svg
-        viewBox="0 0 37.5 37.5"
-        xmlns="http://www.w3.org/2000/svg"
-        fill="currentColor"
-      >
-        <g transform="translate(-19.78 -38.938)">
-          <ellipse
-            transform="rotate(-29.569)"
-            cx="-1.9413"
-            cy="77.183"
-            rx="8.6655"
-            ry="5.7999"
-            stroke-width=".24914"
-          />
-          <rect
-            x="42.659"
-            y="41.156"
-            width="1.8017"
-            height="24.716"
-            stroke-width=".30226"
-          />
-        </g>
+      <!-- Default icon when no note is selected. Can be overridden by the user. This
+      SVG is part of the project and is licensed under CC0 1.0 Universal. -->
+      <svg viewBox="0 -960 960 960">
+        <path
+          d="m679.37-879.99h39.405v557.69h-39.405zm24.782 497.94a158.9 237.09 59.29 0 1-125.94 257.49 158.9 237.09 59.29 0 1-283.56-18.475 158.9 237.09 59.29 0 1 125.92-257.5 158.9 237.09 59.29 0 1 283.57 18.458l-204.74 119.52z"
+        />
       </svg>
     </slot>
   </button>
 
   <dialog id="note-selector-dialog" aria-labelledby="dialog-heading">
-    <button id="close-dialog-button">×</button>
+    <button id="close-dialog-button">
+      <slot name="close-icon">
+        <!-- Default icon when no note is selected. Can be overridden by the user. This
+      SVG is part of the project and is licensed under CC0 1.0 Universal. -->
+        <svg viewBox="0 -960 960 960">
+          <path
+            transform="rotate(-45)"
+            d="m638.82-400h80v800h-80zm-360 360h800v80h-800z"
+          />
+        </svg>
+      </slot>
+    </button>
 
     <h2 id="dialog-heading" class="visually-hidden">Select a Note</h2>
 
@@ -433,6 +432,8 @@ export class EnharmonicNoteSelector extends HTMLElement {
   }
 
   set selectedNoteName(newNote: string | null) {
+    if (this.#selectedNoteName === newNote) return;
+
     // Reset values until proven valid
     this.#selectedNoteName = null;
     this.#selectedNoteInteger = null;

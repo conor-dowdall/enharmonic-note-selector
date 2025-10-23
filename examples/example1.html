@@ -41,9 +41,7 @@
       <h2>Select a Note / Color-Theme</h2>
       <select name="color-themes" id="color-theme-select">
         <option value="">No Color Theme</option>
-        <option value="musoDojo">Muso Dojo</option>
-        <option value="boomwhackers">Boomwhackers</option>
-        <option value="cIsRed">C is Red</option>
+        <option value="musoDojo">Muso Dojo Color Theme</option>
       </select>
       <button id="random-note-button">Random Note</button>
       <enharmonic-note-selector root-notes-only></enharmonic-note-selector>
@@ -54,78 +52,36 @@
         console.log("Selected note:", event.detail);
       });
 
-      // copy of the data stored in the `jsr:@musodojo/note-colors-data` package
-      // we just need the `colors` arrays here
-      const noteColorThemes = {
-        musoDojo: {
-          name: "Muso Dojo",
-          relative: false,
-          colors: [
-            "#ED2929",
-            "#9F000F",
-            "#78C7C7",
-            "#00008B",
-            "#FF9933",
-            "#EBEB19",
-            "#286704",
-            "#99CC33",
-            "#660099",
-            "#CC00FF",
-            "#BF6A1F",
-            "#FF9EE6",
-          ],
-        },
-        boomwhackers: {
-          name: "Boomwhackers",
-          relative: false,
-          colors: [
-            "#E21C48",
-            "#F26622",
-            "#F99D1C",
-            "#FFCC33",
-            "#FFF32B",
-            "#BCD85F",
-            "#62BC47",
-            "#009C95",
-            "#0071BB",
-            "#5E50A1",
-            "#8D5BA6",
-            "#CF3E96",
-          ],
-        },
-        cIsRed: {
-          name: "C is Red",
-          relative: true,
-          colors: [
-            "#ED2929",
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-          ],
-        },
-      };
-
-      const selector = document.querySelector("enharmonic-note-selector");
-      document
-        .getElementById("color-theme-select")
-        .addEventListener("change", (event) => {
-          if (event.target.value) {
-            selector.noteColorGroup =
-              noteColorThemes[event.target.value].colors;
-          } else selector.noteColorGroup = null;
-        });
+      const musoDojoColorTheme = [
+        "#ED2929",
+        "#9F000F",
+        "#78C7C7",
+        "#00008B",
+        "#FF9933",
+        "#EBEB19",
+        "#286704",
+        "#99CC33",
+        "#660099",
+        "#CC00FF",
+        "#BF6A1F",
+        "#FF9EE6",
+      ];
 
       const noteSelector = document.querySelector("enharmonic-note-selector");
-      const randomButton = document.getElementById("random-note-button");
-      randomButton.addEventListener("click", () => {
+      const colorThemeSelect = document.getElementById("color-theme-select");
+      const randomNoteButton = document.getElementById("random-note-button");
+
+      noteSelector.noteColorGroup = colorThemeSelect.value
+        ? musoDojoColorTheme
+        : null;
+
+      colorThemeSelect.addEventListener("change", (event) => {
+        noteSelector.noteColorGroup = event.target.value
+          ? musoDojoColorTheme
+          : null;
+      });
+
+      randomNoteButton.addEventListener("click", () => {
         noteSelector.setRandomNote();
       });
     </script>
