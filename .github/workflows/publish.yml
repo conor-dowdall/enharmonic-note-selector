@@ -1,8 +1,9 @@
-name: Publish
+name: Publish Package
+
 on:
   push:
-    branches:
-      - publish
+    tags:
+      - "v*"
 
 jobs:
   publish:
@@ -15,5 +16,5 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Publish package
+      - name: Publish to JSR
         run: npx jsr publish
