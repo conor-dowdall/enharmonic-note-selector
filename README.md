@@ -5,7 +5,8 @@
 The `enharmonic-note-selector` is a custom HTML element that allows users to
 select an enharmonic note (e.g., "C", "D♯", "E♭"). It displays a button which,
 when clicked, opens a dialog containing all possible enharmonic equivalents for
-each pitch.
+each pitch. It dispatches an event with the note name and note integer in the
+details.
 
 ## Features
 
