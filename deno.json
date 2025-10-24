@@ -1,6 +1,6 @@
 {
   "name": "@musodojo/enharmonic-note-selector",
-  "version": "7.1.1",
+  "version": "7.1.2",
   "license": "CC0 1.0 Universal",
   "exports": "./src/mod.ts",
   "imports": {
