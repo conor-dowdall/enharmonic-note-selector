@@ -37,7 +37,7 @@ cat > "$NPM_DIR/package.json" <<EOF
   "keywords": [
     "music",
     "theory",
-    "enharmonic",
+    "enharmonic"
   ],
   "license": "CC0-1.0",
   "author": "Conor Dowdall",
