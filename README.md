@@ -1,20 +1,60 @@
 # Enharmonic Note Selector Web Component
 
-## Description
+`enharmonic-note-selector` is a custom HTML element that allows users to select
+an enharmonic note (e.g., "C", "D♯", "E♭") and dispatch a custom event.
 
-The `enharmonic-note-selector` is a custom HTML element that allows users to
-select an enharmonic note (e.g., "C", "D♯", "E♭"). It displays a button which,
-when clicked, opens a dialog containing all possible enharmonic equivalents for
-each pitch. It dispatches an event with the note name and note integer in the
-details.
+- displays a button which opens a dialog containing all enharmonic equivalents
+  for each pitch, including up to double sharps and flats.
+- ability to limit choice to common root notes only.
+- dispatches an event with the note name and note integer in the details.
+
+[![npm version](https://img.shields.io/npm/v/@musodojo/enharmonic-note-selector.svg)](https://www.npmjs.com/package/@musodojo/enharmonic-note-selector)
+[![npm downloads](https://img.shields.io/npm/dw/@musodojo/enharmonic-note-selector.svg)](https://www.npmjs.com/package/@musodojo/enharmonic-note-selector)
+[![JSR score](https://jsr.io/badges/@musodojo/enharmonic-note-selector)](https://jsr.io/@musodojo/enharmonic-note-selector)
+
+## Bundle with Deno
+
+```bash
+deno task bundle
+```
+
+**See examples/example1.html**
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Simple Enharmonic Note Selector Example</title>
+    <script type="module" src="../dist/bundle.js"></script>
+  </head>
+  <body>
+    <h1>Enharmonic Note Selector</h1>
+    <enharmonic-note-selector
+      selected-note-name="C♯"
+    ></enharmonic-note-selector>
+
+    <script type="module">
+      const selector = document.querySelector(
+        "enharmonic-note-selector",
+      );
+
+      selector.addEventListener("enharmonic-note-selected", (e) => {
+        console.log("Note name:", e.detail.noteName);
+        console.log("Note integer:", e.detail.noteInteger);
+      });
+    </script>
+  </body>
+</html>
+```
 
 ## Features
 
 - **Enharmonic Note Selection:** Provides a user-friendly interface for choosing
   a specific enharmonic spelling.
 - **Customizable Appearance:** Supports theming via CSS custom properties,
-  allowing you to control the colors of the note buttons.
-- **Event Handling:** Dispatches a `enharmonic-note-selected` event when the
+  allowing you to control the colors underlining each note / pitch-class.
+- **Event Handling:** Dispatches an `enharmonic-note-selected` event when the
   user makes a selection, providing the selected note name and note integer.
 - **Attributes and Properties:**
   - `selected-note-name` attribute: Sets the initially selected note name.
@@ -25,7 +65,7 @@ details.
   - `root-notes-only` attribute: A boolean attribute that, when present,
     restricts the selection to only standard root notes.
 - **Random Selection:** Includes a public method to programmatically select a
-  random note, useful for demonstrations or practice applications.
+  random note.
 
 ## Styling with CSS Custom Properties
 
@@ -36,9 +76,10 @@ The component's appearance can be customized in several ways.
 You can replace the default icons for the main button and the close button using
 HTML slots.
 
-- **Main Button Icon:** Provide an element (like an `<img>` or `<svg>`) directly
-  inside the `<enharmonic-note-selector>` tag. This will replace the default
-  musical note icon that appears when no note is selected.
+- **Main Button Icon:** Provide an element (like an `<img>` or `<svg>` or even
+  `<p>Choose A Note</p>`) directly inside the `<enharmonic-note-selector>` tag.
+  This will replace the default musical note icon that appears when no note is
+  selected.
 
 - **Close Button Icon:** To replace the 'X' icon in the dialog, add an element
   with the attribute `slot="close-icon"`.
@@ -58,7 +99,7 @@ HTML slots.
 The main button inside the component is exposed via a shadow part named
 `main-button`. This allows you to directly style its padding, font, and other
 properties from your global stylesheet. This is the recommended way to control
-the component's size and internal spacing when a note is selected.
+the component's size and internal spacing.
 
 ```css
 enharmonic-note-selector::part(main-button) {
