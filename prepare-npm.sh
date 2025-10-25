@@ -27,6 +27,10 @@ echo "Creating '$NPM_DIR/package.json'..."
 # Read the version from deno.json
 VERSION=$(jq -r .version deno.json)
 
+# Read the dependency version from deno.json
+DEP_VERSION_STRING=$(jq -r '.imports["@musodojo/music-theory-data"]' deno.json)
+DEP_VERSION=$(echo "$DEP_VERSION_STRING" | cut -d'@' -f3)
+
 # Define the package.json content.
 # The version is dynamically inserted from the variable.
 cat > "$NPM_DIR/package.json" <<EOF
@@ -49,13 +53,24 @@ cat > "$NPM_DIR/package.json" <<EOF
   },
   "bugs": {
     "url": "https://github.com/conor-dowdall/enharmonic-note-selector/issues"
+  },
+  "dependencies": {
+    "@musodojo/music-theory-data": "$DEP_VERSION"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.11",
+    "typescript": "^5.9.3"
+  },
+  "scripts": {
+    "bundle": "esbuild src/mod.ts --bundle --minify --platform=browser --outfile=dist/bundle.js"
   }
 }
 EOF
 
 # 3. Copy the entire 'src' directory, LICENSE, and README.md to 'npm/'
-echo "Copying 'src/', 'LICENSE', and 'README.md' to '$NPM_DIR/'..."
+echo "Copying 'src/', 'examples/', 'LICENSE', and 'README.md' to '$NPM_DIR/'..."
 cp -r src "$NPM_DIR/"
+cp -r examples "$NPM_DIR/"
 cp LICENSE README.md "$NPM_DIR/"
 
 echo "NPM package preparation complete. The package is ready in the '$NPM_DIR' directory."

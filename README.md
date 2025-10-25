@@ -1,7 +1,8 @@
 # Enharmonic Note Selector Web Component
 
 `enharmonic-note-selector` is a custom HTML element that allows users to select
-an enharmonic note (e.g., "C", "D♯", "E♭") and dispatch a custom event.
+a musical note (e.g., "C", "B♯", "D♯", "E♭") from a dialog and dispatch a custom
+event.
 
 - displays a button which opens a dialog containing all enharmonic equivalents
   for each pitch, including up to double sharps and flats.
@@ -12,10 +13,20 @@ an enharmonic note (e.g., "C", "D♯", "E♭") and dispatch a custom event.
 [![npm downloads](https://img.shields.io/npm/dw/@musodojo/enharmonic-note-selector.svg)](https://www.npmjs.com/package/@musodojo/enharmonic-note-selector)
 [![JSR score](https://jsr.io/badges/@musodojo/enharmonic-note-selector)](https://jsr.io/@musodojo/enharmonic-note-selector)
 
-## Bundle with Deno
+## Bundle
+
+Create the `dist/bundle.js` file for the example
+
+### Deno
 
 ```bash
 deno task bundle
+```
+
+### Node
+
+```bash
+npm run bundle
 ```
 
 **See examples/example1.html**
@@ -35,9 +46,7 @@ deno task bundle
     ></enharmonic-note-selector>
 
     <script type="module">
-      const selector = document.querySelector(
-        "enharmonic-note-selector",
-      );
+      const selector = document.querySelector("enharmonic-note-selector");
 
       selector.addEventListener("enharmonic-note-selected", (e) => {
         console.log("Note name:", e.detail.noteName);
