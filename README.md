@@ -46,7 +46,9 @@ npm run bundle
     ></enharmonic-note-selector>
 
     <script type="module">
-      const selector = document.querySelector("enharmonic-note-selector");
+      const selector = document.querySelector(
+        "enharmonic-note-selector",
+      );
 
       selector.addEventListener("enharmonic-note-selected", (e) => {
         console.log("Note name:", e.detail.noteName);
@@ -91,7 +93,7 @@ HTML slots.
   selected.
 
 - **Close Button Icon:** To replace the 'X' icon in the dialog, add an element
-  with the attribute `slot="close-icon"`.
+  with the attribute `slot="close-dialog-icon"`.
 
 ```html
 <enharmonic-note-selector>
@@ -99,7 +101,7 @@ HTML slots.
   <svg><!-- your custom svg --></svg>
 
   <!-- This SVG replaces the default close icon in the dialog -->
-  <svg slot="close-icon"><!-- your custom svg --></svg>
+  <svg slot="close-dialog-icon"><!-- your custom svg --></svg>
 </enharmonic-note-selector>
 ```
 

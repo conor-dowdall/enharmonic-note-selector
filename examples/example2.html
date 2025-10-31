@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Enharmonic Note Selector Example</title>
+    <style>
+      :root {
+        color-scheme: dark light;
+        font-family:
+          system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue",
+          sans-serif;
+      }
+
+      h1 {
+        font-size: 1.5em;
+      }
+
+      .wrapper {
+        display: flex;
+        align-items: baseline;
+      }
+
+      enharmonic-note-selector {
+        --_border-color: light-dark(rgb(255, 0, 0), rgb(128, 200, 255));
+        --_shadow-color: light-dark(rgb(255, 0, 0), rgb(255, 255, 255));
+
+        &::part(main-button) {
+          font-size: 1.3em;
+          margin-inline-start: 0.2em;
+        }
+
+        &::part(dialog) {
+          border-radius: 0.5em;
+          border: 0.2em solid var(--_border-color);
+          box-shadow: 0 0 1em var(--_shadow-color);
+        }
+
+        &::part(note-button),
+        &::part(close-dialog-button) {
+          border-radius: 0.5em;
+          border: 0.2em solid var(--_border-color);
+          box-shadow: 0 0 0.5em var(--_shadow-color);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Create a Note Sequence</h1>
+    <p>by clicking a note and selecting from the dialog</p>
+    <div class="wrapper">
+      <enharmonic-note-selector
+        root-notes-only
+        selected-note-name="C"
+      ></enharmonic-note-selector>,
+      <enharmonic-note-selector
+        root-notes-only
+        selected-note-name="D"
+      ></enharmonic-note-selector>,
+      <enharmonic-note-selector
+        root-notes-only
+        selected-note-name="E"
+      ></enharmonic-note-selector>,
+      <enharmonic-note-selector
+        root-notes-only
+        selected-note-name="F"
+      ></enharmonic-note-selector>,
+      <enharmonic-note-selector
+        root-notes-only
+        selected-note-name="G"
+      ></enharmonic-note-selector>
+    </div>
+    <script type="module" src="../dist/bundle.js"></script>
+  </body>
+</html>
