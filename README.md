@@ -63,8 +63,9 @@ npm run bundle
 
 - **Enharmonic Note Selection:** Provides a user-friendly interface for choosing
   a specific enharmonic spelling.
-- **Customizable Appearance:** Supports theming via CSS custom properties,
-  allowing you to control the colors underlining each note / pitch-class.
+- **Customizable Appearance:** Supports theming via CSS custom properties and
+  slots. You can set a background color for each note pitch, and the component
+  will automatically calculate a high-contrast text color.
 - **Event Handling:** Dispatches an `enharmonic-note-selected` event when the
   user makes a selection, providing the selected note name and note integer.
 - **Attributes and Properties:**
@@ -126,35 +127,24 @@ enharmonic-note-selector::part(main-button):hover {
 
 ### Adding Note Colors
 
-- `--note-color-0`: Color for pitch 0 (C)
-- `--note-color-1`: Color for pitch 1 (C#/Db)
-- `--note-color-2`: Color for pitch 2 (D)
-- `--note-color-3`: Color for pitch 3 (D#/Eb)
-- `--note-color-4`: Color for pitch 4 (E)
-- `--note-color-5`: Color for pitch 5 (F)
-- `--note-color-6`: Color for pitch 6 (F#/Gb)
-- `--note-color-7`: Color for pitch 7 (G)
-- `--note-color-8`: Color for pitch 8 (G#/Ab)
-- `--note-color-9`: Color for pitch 9 (A)
-- `--note-color-10`: Color for pitch 10 (A#/Bb)
-- `--note-color-11`: Color for pitch 11 (B)
+You can set a background color for each of the 12 note pitches using CSS custom
+properties or the `noteColorGroup` JavaScript property. The component will
+automatically calculate and apply a high-contrast text color (`black` or
+`white`) to ensure readability.
 
-You can set these properties in your CSS to override the default colors. For
-example, to use a custom color scheme:
+The available properties are `--note-color-0` through `--note-color-11`.
+
+- `--note-color-0`: Color for pitch 0 (C, B♯, D♭♭)
+- `--note-color-1`: Color for pitch 1 (C♯, D♭)
+- ...and so on for all 12 pitches.
+
+You can set these in your CSS:
 
 ```css
 enharmonic-note-selector {
   --note-color-0: #ff0000; /* Red for C */
   --note-color-1: #ff7f00; /* Orange for C# */
   --note-color-2: #ffff00; /* Yellow for D */
-  --note-color-3: #7fff00; /* Chartreuse for D# */
-  --note-color-4: #00ff00; /* Green for E */
-  --note-color-5: #00ff7f; /* Spring Green for F */
-  --note-color-6: #00ffff; /* Cyan for F# */
-  --note-color-7: #007fff; /* Azure for G */
-  --note-color-8: #0000ff; /* Blue for G# */
-  --note-color-9: #7f00ff; /* Violet for A */
-  --note-color-10: #ff00ff; /* Magenta for A# */
-  --note-color-11: #ff007f; /* Rose for B */
+  /* ... etc. */
 }
 ```

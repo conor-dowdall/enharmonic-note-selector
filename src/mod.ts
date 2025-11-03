@@ -262,8 +262,13 @@ enharmonicNoteSelectorTemplate.innerHTML = /* HTML */ `
   </dialog>
 `;
 
+/**
+ * The detail object dispatched with the `enharmonic-note-selected` event.
+ */
 export interface EnharmonicNoteSelectedEventDetail {
+  /** The string name of the selected note (e.g., "C♯", "D♭"). */
   noteName: string;
+  /** The integer representation of the note's pitch (0-11), where C=0. */
   noteInteger: RootNoteInteger;
 }
 
