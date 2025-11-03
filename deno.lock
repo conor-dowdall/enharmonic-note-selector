@@ -1,16 +1,16 @@
 {
   "version": "5",
   "specifiers": {
-    "jsr:@musodojo/music-theory-data@^20.1.1": "20.1.1"
+    "jsr:@musodojo/music-theory-data@^20.1.3": "20.1.3"
   },
   "jsr": {
-    "@musodojo/music-theory-data@20.1.1": {
-      "integrity": "40ef4342b72ac44e91e8589d8d40b646375aab6f9cb9cdf3a98f0824a4ddb81a"
+    "@musodojo/music-theory-data@20.1.3": {
+      "integrity": "0e9e5641a9d5bd457d44b74c37d21e8903c127fc8555d10f251a101d0c648340"
     }
   },
   "workspace": {
     "dependencies": [
-      "jsr:@musodojo/music-theory-data@^20.1.1"
+      "jsr:@musodojo/music-theory-data@^20.1.3"
     ]
   }
 }

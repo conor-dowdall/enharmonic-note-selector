@@ -58,6 +58,20 @@ enharmonicNoteSelectorTemplate.innerHTML = /* HTML */ `
       --_note-color-10: var(--note-color-10, transparent);
       --_note-color-11: var(--note-color-11, transparent);
 
+      /* Text colors are calculated in JS for high contrast */
+      --_note-text-color-0: var(--note-text-color-0, currentColor);
+      --_note-text-color-1: var(--note-text-color-1, currentColor);
+      --_note-text-color-2: var(--note-text-color-2, currentColor);
+      --_note-text-color-3: var(--note-text-color-3, currentColor);
+      --_note-text-color-4: var(--note-text-color-4, currentColor);
+      --_note-text-color-5: var(--note-text-color-5, currentColor);
+      --_note-text-color-6: var(--note-text-color-6, currentColor);
+      --_note-text-color-7: var(--note-text-color-7, currentColor);
+      --_note-text-color-8: var(--note-text-color-8, currentColor);
+      --_note-text-color-9: var(--note-text-color-9, currentColor);
+      --_note-text-color-10: var(--note-text-color-10, currentColor);
+      --_note-text-color-11: var(--note-text-color-11, currentColor);
+
       display: inline-block;
       font-size: inherit;
     }
@@ -100,45 +114,57 @@ enharmonicNoteSelectorTemplate.innerHTML = /* HTML */ `
 
     [part="main-button"],
     [part="note-button"] {
-      /* TODO - put in #buildButtons()? style="" */
-
-      text-decoration: transparent underline solid 0.12em;
-
       &[data-note-integer="0"] {
-        text-decoration-color: var(--_note-color-0);
+        background-color: var(--_note-color-0);
+        color: var(--_note-text-color-0);
       }
       &[data-note-integer="1"] {
-        text-decoration-color: var(--_note-color-1);
+        background-color: var(--_note-color-1);
+        color: var(--_note-text-color-1);
       }
       &[data-note-integer="2"] {
-        text-decoration-color: var(--_note-color-2);
+        background-color: var(--_note-color-2);
+        color: var(--_note-text-color-2);
       }
       &[data-note-integer="3"] {
-        text-decoration-color: var(--_note-color-3);
+        background-color: var(--_note-color-3);
+        color: var(--_note-text-color-3);
       }
       &[data-note-integer="4"] {
-        text-decoration-color: var(--_note-color-4);
+        background-color: var(--_note-color-4);
+        color: var(--_note-text-color-4);
       }
       &[data-note-integer="5"] {
-        text-decoration-color: var(--_note-color-5);
+        background-color: var(--_note-color-5);
+        color: var(--_note-text-color-5);
       }
       &[data-note-integer="6"] {
-        text-decoration-color: var(--_note-color-6);
+        background-color: var(--_note-color-6);
+        color: var(--_note-text-color-6);
       }
       &[data-note-integer="7"] {
-        text-decoration-color: var(--_note-color-7);
+        background-color: var(--_note-color-7);
+        color: var(--_note-text-color-7);
       }
       &[data-note-integer="8"] {
-        text-decoration-color: var(--_note-color-8);
+        background-color: var(--_note-color-8);
+        color: var(--_note-text-color-8);
       }
       &[data-note-integer="9"] {
-        text-decoration-color: var(--_note-color-9);
+        background-color: var(--_note-color-9);
+        color: var(--_note-text-color-9);
       }
       &[data-note-integer="10"] {
-        text-decoration-color: var(--_note-color-10);
+        background-color: var(--_note-color-10);
+        color: var(--_note-text-color-10);
       }
       &[data-note-integer="11"] {
-        text-decoration-color: var(--_note-color-11);
+        background-color: var(--_note-color-11);
+        color: var(--_note-text-color-11);
+      }
+
+      &[data-note-integer] {
+        border-color: transparent;
       }
     }
 
@@ -179,10 +205,11 @@ enharmonicNoteSelectorTemplate.innerHTML = /* HTML */ `
         gap: 0.4em;
 
         > [part="note-button"] {
-          min-width: 7ch;
+          width: 7ch;
           height: 3.5ch;
           border: 1px solid
             color-mix(in srgb, currentColor 50%, transparent 50%);
+          corner-shape: squircle;
           border-radius: 0.5em;
         }
       }
@@ -240,6 +267,10 @@ export interface EnharmonicNoteSelectedEventDetail {
   noteInteger: RootNoteInteger;
 }
 
+/**
+ * A web component for selecting a musical note from its enharmonic equivalents.
+ * @fires enharmonic-note-selected - Dispatched when a note is selected by the user.
+ */
 export class EnharmonicNoteSelector extends HTMLElement {
   #shadowRoot: ShadowRoot;
 
@@ -263,29 +294,32 @@ export class EnharmonicNoteSelector extends HTMLElement {
 
     this.#shadowRoot = this.attachShadow({ mode: "open" });
     this.#shadowRoot.appendChild(
-      enharmonicNoteSelectorTemplate.content.cloneNode(true)
+      enharmonicNoteSelectorTemplate.content.cloneNode(true),
     );
 
     const mainButton = this.#shadowRoot.querySelector<HTMLButtonElement>(
-      '[part="main-button"]'
+      '[part="main-button"]',
     );
 
-    const noteSelectorDialog =
-      this.#shadowRoot.querySelector<HTMLDialogElement>('[part="dialog"]');
+    const noteSelectorDialog = this.#shadowRoot.querySelector<
+      HTMLDialogElement
+    >('[part="dialog"]');
 
     const closeDialogButton = this.#shadowRoot.querySelector<HTMLButtonElement>(
-      '[part="close-dialog-button"]'
+      '[part="close-dialog-button"]',
     );
 
-    const enharmonicNoteButtonsDiv =
-      this.#shadowRoot.querySelector<HTMLDivElement>(
-        "#enharmonic-note-buttons-div"
-      );
+    const enharmonicNoteButtonsDiv = this.#shadowRoot.querySelector<
+      HTMLDivElement
+    >(
+      "#enharmonic-note-buttons-div",
+    );
 
-    const selectedNoteNameSpan =
-      this.#shadowRoot.querySelector<HTMLSpanElement>(
-        "#selected-note-name-span"
-      );
+    const selectedNoteNameSpan = this.#shadowRoot.querySelector<
+      HTMLSpanElement
+    >(
+      "#selected-note-name-span",
+    );
 
     if (
       !mainButton ||
@@ -295,7 +329,7 @@ export class EnharmonicNoteSelector extends HTMLElement {
       !selectedNoteNameSpan
     ) {
       throw new Error(
-        "EnharmonicNoteSelector: Critical elements not found in shadow DOM."
+        "EnharmonicNoteSelector: Critical elements not found in shadow DOM.",
       );
     }
 
@@ -319,14 +353,14 @@ export class EnharmonicNoteSelector extends HTMLElement {
       () => {
         this.#noteSelectorDialog.showModal();
       },
-      { signal }
+      { signal },
     );
 
     this.#enharmonicNoteButtonsDiv.addEventListener(
       "click",
       (event) => {
         const button = (event.target as HTMLElement).closest<HTMLButtonElement>(
-          '[part="note-button"]'
+          '[part="note-button"]',
         );
         if (button) {
           this.#selectedNoteName = button.dataset.noteName || null;
@@ -339,13 +373,13 @@ export class EnharmonicNoteSelector extends HTMLElement {
           this.#dispatchNoteSelectedEvent();
         }
       },
-      { signal }
+      { signal },
     );
 
     this.#closeDialogButton.addEventListener(
       "click",
       () => this.#noteSelectorDialog.close(),
-      { signal }
+      { signal },
     );
 
     this.#updateNoteSelectorButton();
@@ -359,23 +393,27 @@ export class EnharmonicNoteSelector extends HTMLElement {
 
     const buttonsHtml = noteGroups
       .map(
-        (notes, index) => /* HTML */ `<div
+        (notes, index) =>
+          /* HTML */ `<div
           class="note-group"
           role="group"
           aria-label="Pitch ${index}"
         >
-          ${notes
-            .map(
-              (note) => /* HTML */ `<button
+          ${
+            notes
+              .map(
+                (note) =>
+                  /* HTML */ `<button
                 part="note-button"
                 data-note-name="${note}"
                 data-note-integer="${index}"
               >
                 ${note}
-              </button>`
-            )
-            .join("")}
-        </div>`
+              </button>`,
+              )
+              .join("")
+          }
+        </div>`,
       )
       .join("");
 
@@ -389,7 +427,7 @@ export class EnharmonicNoteSelector extends HTMLElement {
   attributeChangedCallback(
     name: string,
     oldValue: string | null,
-    newValue: string | null
+    newValue: string | null,
   ) {
     if (oldValue === newValue) return;
     switch (name) {
@@ -412,7 +450,7 @@ export class EnharmonicNoteSelector extends HTMLElement {
       this.#mainButton.querySelector("slot")!.style.display = "none";
       this.#mainButton.setAttribute(
         "data-note-integer",
-        this.#selectedNoteInteger.toString()
+        this.#selectedNoteInteger.toString(),
       );
       this.#mainButton.ariaLabel = `${this.#selectedNoteName} selected`;
     } else {
@@ -444,16 +482,20 @@ export class EnharmonicNoteSelector extends HTMLElement {
             },
             bubbles: true,
             composed: true, // Allows event to cross Shadow DOM boundary
-          }
-        )
+          },
+        ),
       );
     } else {
       console.warn(
-        "attempted to dispatch enharmonic-note-selected event with null data"
+        "attempted to dispatch enharmonic-note-selected event with null data",
       );
     }
   }
 
+  /**
+   * Gets the currently selected note name (e.g., "C♯", "D♭").
+   * @returns {string | null} The selected note name or null if no note is selected.
+   */
   get selectedNoteName(): string | null {
     return this.#selectedNoteName;
   }
@@ -489,48 +531,119 @@ export class EnharmonicNoteSelector extends HTMLElement {
     this.#dispatchNoteSelectedEvent();
   }
 
+  /**
+   * Gets whether the selector is restricted to common root notes.
+   * @returns {boolean} True if only root notes are shown.
+   */
   get rootNotesOnly(): boolean {
     return this.hasAttribute("root-notes-only");
   }
 
+  /**
+   * Sets whether the selector should be restricted to common root notes.
+   * @param {boolean} value - Set to true to show only root notes.
+   */
   set rootNotesOnly(value: boolean) {
     this.toggleAttribute("root-notes-only", value);
   }
 
+  /**
+   * Selects a new, random note from the available options.
+   * Ensures the newly selected note is different from the current one.
+   */
   setRandomNote() {
     const noteGroups = this.hasAttribute("root-notes-only")
       ? enharmonicRootNoteGroups
       : enharmonicNoteNameGroups;
 
-    const randomIndex = Math.floor(Math.random() * noteGroups.length);
-    const randomNote =
-      noteGroups[randomIndex][
-        Math.floor(Math.random() * noteGroups[randomIndex].length)
-      ];
+    let randomNote: string;
+
+    // Keep selecting a random note until it's different from the current one.
+    do {
+      const randomIndex = Math.floor(Math.random() * noteGroups.length);
+      const randomNoteGroup = noteGroups[randomIndex];
+      randomNote =
+        randomNoteGroup[Math.floor(Math.random() * randomNoteGroup.length)];
+    } while (randomNote === this.selectedNoteName);
+
     this.selectedNoteName = randomNote;
   }
 
+  /**
+   * Gets the integer representation (0-11) of the selected note.
+   * @returns {RootNoteInteger | null} The note integer or null if no note is selected.
+   */
   get selectedNoteInteger(): RootNoteInteger | null {
     return this.#selectedNoteInteger;
   }
 
+  /**
+   * Gets the currently configured color group for note pitches.
+   * @returns {ColorGroup | null} An array of 12 CSS color strings, or null.
+   */
   get noteColorGroup(): ColorGroup | null {
     return this.#noteColorGroup;
   }
 
+  /**
+   * Sets the color group for note pitches. This will automatically calculate and apply high-contrast text colors for each background.
+   * @param {ColorGroup | null} noteColorGroup - An array of 12 CSS color strings.
+   */
   set noteColorGroup(noteColorGroup: ColorGroup | null) {
     if (noteColorGroup) {
       this.#noteColorGroup = noteColorGroup;
-      for (let i = 0; i < 12; i++) {
-        this.style.setProperty(`--note-color-${i}`, noteColorGroup[i]);
-      }
+      noteColorGroup.forEach((color, i) => {
+        const textColor = color ? this.#getContrastColor(color) : null;
+        this.style.setProperty(`--note-color-${i}`, color);
+        this.style.setProperty(`--note-text-color-${i}`, textColor);
+      });
     } else {
       this.#noteColorGroup = null;
       // Clear the custom properties if no color group is set
       for (let i = 0; i < 12; i++) {
         this.style.setProperty(`--note-color-${i}`, null);
+        this.style.setProperty(`--note-text-color-${i}`, null);
       }
     }
+  }
+
+  /**
+   * Calculates whether black or white text has a better contrast ratio against a given background color.
+   * @param {string} color - The background color in a CSS-compatible format (e.g., hex, rgb).
+   * @returns {'black' | 'white'} - The color that provides better contrast.
+   */
+  #getContrastColor(color: string): "black" | "white" {
+    // Create a temporary element to resolve the color to RGB
+    const tempDiv = document.createElement("div");
+    tempDiv.style.color = color;
+    document.body.appendChild(tempDiv);
+
+    // Get the computed RGB value
+    const computedColor = globalThis.getComputedStyle(tempDiv).color;
+    document.body.removeChild(tempDiv);
+
+    const rgbMatch = computedColor.match(/\d+/g);
+    if (!rgbMatch) {
+      return "black"; // Default to black if color parsing fails
+    }
+
+    const [r, g, b] = rgbMatch.map(Number);
+
+    // Formula for relative luminance (from WCAG)
+    // https://www.w3.org/TR/WCAG20/#relativeluminancedef
+    const getLuminance = (c: number) => {
+      const sRGB = c / 255;
+      return sRGB <= 0.03928
+        ? sRGB / 12.92
+        : Math.pow((sRGB + 0.055) / 1.055, 2.4);
+    };
+
+    const luminance = 0.2126 * getLuminance(r) +
+      0.7152 * getLuminance(g) +
+      0.0722 * getLuminance(b);
+
+    // Use a threshold of 0.179 as recommended by WCAG for contrast
+    return luminance > 0.179 ? "black" : "white";
   }
 }
 
