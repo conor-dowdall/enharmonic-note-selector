@@ -30,6 +30,7 @@ import {
   type ColorGroup,
   enharmonicNoteNameGroups,
   enharmonicRootNoteGroups,
+  getContrastColor,
   type NoteName,
   type RootNoteInteger,
 } from "@musodojo/music-theory-data";
@@ -598,7 +599,7 @@ export class EnharmonicNoteSelector extends HTMLElement {
     if (noteColorGroup) {
       this.#noteColorGroup = noteColorGroup;
       noteColorGroup.forEach((color, i) => {
-        const textColor = color ? this.#getContrastColor(color) : null;
+        const textColor = color ? getContrastColor(color) : null;
         this.style.setProperty(`--note-color-${i}`, color);
         this.style.setProperty(`--note-text-color-${i}`, textColor);
       });
@@ -610,45 +611,6 @@ export class EnharmonicNoteSelector extends HTMLElement {
         this.style.setProperty(`--note-text-color-${i}`, null);
       }
     }
-  }
-
-  /**
-   * Calculates whether black or white text has a better contrast ratio against a given background color.
-   * @param {string} color - The background color in a CSS-compatible format (e.g., hex, rgb).
-   * @returns {'black' | 'white'} - The color that provides better contrast.
-   */
-  #getContrastColor(color: string): "black" | "white" {
-    // Create a temporary element to resolve the color to RGB
-    const tempDiv = document.createElement("div");
-    tempDiv.style.color = color;
-    document.body.appendChild(tempDiv);
-
-    // Get the computed RGB value
-    const computedColor = globalThis.getComputedStyle(tempDiv).color;
-    document.body.removeChild(tempDiv);
-
-    const rgbMatch = computedColor.match(/\d+/g);
-    if (!rgbMatch) {
-      return "black"; // Default to black if color parsing fails
-    }
-
-    const [r, g, b] = rgbMatch.map(Number);
-
-    // Formula for relative luminance (from WCAG)
-    // https://www.w3.org/TR/WCAG20/#relativeluminancedef
-    const getLuminance = (c: number) => {
-      const sRGB = c / 255;
-      return sRGB <= 0.03928
-        ? sRGB / 12.92
-        : Math.pow((sRGB + 0.055) / 1.055, 2.4);
-    };
-
-    const luminance = 0.2126 * getLuminance(r) +
-      0.7152 * getLuminance(g) +
-      0.0722 * getLuminance(b);
-
-    // Use a threshold of 0.179 as recommended by WCAG for contrast
-    return luminance > 0.179 ? "black" : "white";
   }
 }
 
