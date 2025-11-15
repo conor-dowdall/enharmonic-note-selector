@@ -9,10 +9,6 @@ event.
 - ability to limit choice to common root notes only.
 - dispatches an event with the note name and note integer in the details.
 
-[![npm version](https://img.shields.io/npm/v/@musodojo/enharmonic-note-selector.svg)](https://www.npmjs.com/package/@musodojo/enharmonic-note-selector)
-[![npm downloads](https://img.shields.io/npm/dw/@musodojo/enharmonic-note-selector.svg)](https://www.npmjs.com/package/@musodojo/enharmonic-note-selector)
-[![JSR score](https://jsr.io/badges/@musodojo/enharmonic-note-selector)](https://jsr.io/@musodojo/enharmonic-note-selector)
-
 ## Bundle
 
 Create the `dist/bundle.js` file for the example
@@ -88,10 +84,10 @@ The component's appearance can be customized in several ways.
 You can replace the default icons for the main button and the close button using
 HTML slots.
 
-- **Main Button Icon:** Provide an element (like an `<img>` or `<svg>` or even
-  `<p>Choose A Note</p>`) directly inside the `<enharmonic-note-selector>` tag.
-  This will replace the default musical note icon that appears when no note is
-  selected.
+- **Main Button Icon:** Provide an element (e.g., `<img>`, `<svg>`,
+  `<p>Choose A Note</p>`, `Any Text`) directly inside the
+  `<enharmonic-note-selector>` tag. This will replace the default musical note
+  icon that appears when no note is selected.
 
 - **Close Button Icon:** To replace the 'X' icon in the dialog, add an element
   with the attribute `slot="close-dialog-icon"`.
@@ -106,7 +102,7 @@ HTML slots.
 </enharmonic-note-selector>
 ```
 
-### Sizing and Padding using `::part()`
+### Styling using `::part()`
 
 The main button inside the component is exposed via a shadow part named
 `main-button`. This allows you to directly style its padding, font, and other
@@ -124,6 +120,24 @@ enharmonic-note-selector::part(main-button):hover {
   background-color: color-mix(in srgb, currentColor 20%, transparent 80%);
 }
 ```
+
+Style the dialog part using `::part(dialog)`
+
+```css
+enharmonic-note-selector::part(dialog) {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 0.5em;
+  padding: 1em;
+}
+
+enharmonic-note-selector::part(dialog)::backdrop {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+```
+
+The CSS Custom properties `--dialog-backdrop-background` and `--default-spacing`
+are also provided.
 
 ### Adding Note Colors
 

@@ -41,10 +41,13 @@ enharmonicNoteSelectorTemplate.innerHTML = /* HTML */ `
     :host {
       --_main-icon-size: var(--main-icon-size, 2.5ch);
       --_close-dialog-icon-size: var(--close-dialog-icon-size, 2ch);
+
       --_dialog-backdrop-background: var(
         --dialog-backdrop-background,
         light-dark(rgb(255 255 255 / 50%), rgb(0 0 0 / 50%))
       );
+
+      --_default-spacing: var(--default-spacing, 0.5em);
 
       --_note-color-0: var(--note-color-0, transparent);
       --_note-color-1: var(--note-color-1, transparent);
@@ -169,15 +172,16 @@ enharmonicNoteSelectorTemplate.innerHTML = /* HTML */ `
       }
     }
 
-    dialog {
-      padding: 0.5em;
+    [part="dialog"] {
+      padding: var(--_default-spacing);
 
       > [part="close-dialog-button"] {
         display: grid;
         place-items: center;
-        padding: 0.5em 0.5em;
+        padding: var(--_default-spacing);
         border: none;
         margin-inline-start: auto;
+        margin-block-end: var(--_default-spacing);
 
         /* Size icons, but let text content flow naturally */
         ::slotted(svg),
@@ -190,30 +194,30 @@ enharmonicNoteSelectorTemplate.innerHTML = /* HTML */ `
         }
       }
 
-      &::backdrop {
-        background: var(--_dialog-backdrop-background);
+      > #enharmonic-note-buttons-div {
+        display: flex;
+        flex-direction: column;
+        gap: var(--_default-spacing);
+
+        > .note-group {
+          display: flex;
+          flex-wrap: nowrap;
+          gap: var(--_default-spacing);
+
+          > [part="note-button"] {
+            width: 7ch;
+            height: 3.5ch;
+            border: 1px solid
+              light-dark(rgb(0 0 0 / 50%), rgb(255 255 255 / 50%));
+            corner-shape: squircle;
+            border-radius: 0.5em;
+          }
+        }
       }
     }
 
-    #enharmonic-note-buttons-div {
-      display: flex;
-      flex-direction: column;
-      gap: 0.4em;
-
-      > .note-group {
-        display: flex;
-        flex-wrap: nowrap;
-        gap: 0.4em;
-
-        > [part="note-button"] {
-          width: 7ch;
-          height: 3.5ch;
-          border: 1px solid
-            color-mix(in srgb, currentColor 50%, transparent 50%);
-          corner-shape: squircle;
-          border-radius: 0.5em;
-        }
-      }
+    [part="dialog"]::backdrop {
+      background: var(--_dialog-backdrop-background);
     }
 
     .visually-hidden {
