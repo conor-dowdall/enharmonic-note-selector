@@ -99,7 +99,7 @@ enharmonicNoteSelectorTemplate.innerHTML = /* HTML */ `
 
       min-width: var(--_main-icon-size);
 
-      > #selected-note-name-span {
+      > #main-button-text-span {
         grid-area: 1 / 1;
       }
 
@@ -232,7 +232,8 @@ enharmonicNoteSelectorTemplate.innerHTML = /* HTML */ `
   </style>
 
   <button part="main-button">
-    <span id="selected-note-name-span" style="display: none;"></span>
+    <!-- This span is displayed when a note is selected, and the slot (below) is hidden -->
+    <span id="main-button-text-span" style="display: none;"></span>
     <slot>
       <!-- Default icon when no note is selected. Can be overridden by the user. This
       SVG is part of the project and is licensed under CC0 1.0 Universal. -->
@@ -291,7 +292,7 @@ export class EnharmonicNoteSelector extends HTMLElement {
   #dialog!: HTMLDialogElement;
   #closeDialogButton!: HTMLButtonElement;
   #enharmonicNoteButtonsDiv!: HTMLDivElement;
-  #selectedNoteNameSpan!: HTMLSpanElement;
+  #mainButtonTextSpan!: HTMLSpanElement;
 
   #abortController: AbortController | null = null;
   #selectedNoteName: string | null = null;
@@ -314,7 +315,7 @@ export class EnharmonicNoteSelector extends HTMLElement {
   connectedCallback() {
     this.#populateEnharmonicNoteButtonsDiv();
     this.#addEventListeners();
-    this.#updateNoteSelectorButton();
+    this.#updateMainButton();
     this.#syncSelectedNoteAttribute();
   }
 
@@ -361,10 +362,8 @@ export class EnharmonicNoteSelector extends HTMLElement {
       "#enharmonic-note-buttons-div",
     );
 
-    const selectedNoteNameSpan = this.#shadowRoot.querySelector<
-      HTMLSpanElement
-    >(
-      "#selected-note-name-span",
+    const mainButtonTextSpan = this.#shadowRoot.querySelector<HTMLSpanElement>(
+      "#main-button-text-span",
     );
 
     if (
@@ -373,7 +372,7 @@ export class EnharmonicNoteSelector extends HTMLElement {
       !dialog ||
       !closeDialogButton ||
       !enharmonicNoteButtonsDiv ||
-      !selectedNoteNameSpan
+      !mainButtonTextSpan
     ) {
       throw new Error(
         "EnharmonicNoteSelector: Critical elements not found in shadow DOM.",
@@ -385,7 +384,7 @@ export class EnharmonicNoteSelector extends HTMLElement {
     this.#dialog = dialog;
     this.#closeDialogButton = closeDialogButton;
     this.#enharmonicNoteButtonsDiv = enharmonicNoteButtonsDiv;
-    this.#selectedNoteNameSpan = selectedNoteNameSpan;
+    this.#mainButtonTextSpan = mainButtonTextSpan;
   }
 
   #populateEnharmonicNoteButtonsDiv() {
@@ -441,7 +440,7 @@ export class EnharmonicNoteSelector extends HTMLElement {
           this.#selectedNoteInteger = button.dataset.noteInteger
             ? (parseInt(button.dataset.noteInteger, 10) as RootNoteInteger)
             : null;
-          this.#updateNoteSelectorButton();
+          this.#updateMainButton();
           this.#syncSelectedNoteAttribute();
           this.#dialog.close();
           this.#dispatchNoteSelectedEvent();
@@ -457,11 +456,11 @@ export class EnharmonicNoteSelector extends HTMLElement {
     );
   }
 
-  #updateNoteSelectorButton() {
+  #updateMainButton() {
     if (this.#selectedNoteName !== null && this.#selectedNoteInteger !== null) {
       // State when a note is selected
-      this.#selectedNoteNameSpan.textContent = this.#selectedNoteName;
-      this.#selectedNoteNameSpan.style.display = "initial";
+      this.#mainButtonTextSpan.textContent = this.#selectedNoteName;
+      this.#mainButtonTextSpan.style.display = "initial";
       this.#mainButtonSlot.style.display = "none";
       this.#mainButton.setAttribute(
         "data-note-integer",
@@ -470,7 +469,7 @@ export class EnharmonicNoteSelector extends HTMLElement {
       this.#mainButton.ariaLabel = `${this.#selectedNoteName} selected`;
     } else {
       // Default state when no note is selected
-      this.#selectedNoteNameSpan.style.display = "none";
+      this.#mainButtonTextSpan.style.display = "none";
       this.#mainButtonSlot.style.display = "initial";
       this.#mainButton.removeAttribute("data-note-integer");
 
@@ -540,7 +539,7 @@ export class EnharmonicNoteSelector extends HTMLElement {
 
     // Only update the button and attribute if the component is connected to the DOM
     if (this.isConnected) {
-      this.#updateNoteSelectorButton();
+      this.#updateMainButton();
       this.#syncSelectedNoteAttribute();
     }
 
