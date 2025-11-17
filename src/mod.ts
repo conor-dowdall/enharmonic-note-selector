@@ -284,7 +284,7 @@ export interface EnharmonicNoteSelectedEventDetail {
 export class EnharmonicNoteSelector extends HTMLElement {
   #shadowRoot!: ShadowRoot;
 
-  // cache these critical elements in the constructor  with #cacheDomElements()
+  // cache these critical elements in the constructor with #cacheDomElements()
   // and throw an error if they are not found
   #mainButton!: HTMLButtonElement;
   #mainButtonSlot!: HTMLSlotElement;
@@ -306,37 +306,34 @@ export class EnharmonicNoteSelector extends HTMLElement {
     super();
     this.#shadowRoot = this.attachShadow({ mode: "open" });
     this.#shadowRoot.appendChild(
-      enharmonicNoteSelectorTemplate.content.cloneNode(true),
+      enharmonicNoteSelectorTemplate.content.cloneNode(true)
     );
     this.#cacheDomElements();
   }
 
   #cacheDomElements() {
     const mainButton = this.#shadowRoot.querySelector<HTMLButtonElement>(
-      '[part="main-button"]',
+      '[part="main-button"]'
     );
 
     const mainButtonSlot = mainButton?.querySelector<HTMLSlotElement>("slot");
 
-    const dialog = this.#shadowRoot.querySelector<HTMLDialogElement>(
-      '[part="dialog"]',
-    );
+    const dialog =
+      this.#shadowRoot.querySelector<HTMLDialogElement>('[part="dialog"]');
 
     const closeDialogButton = this.#shadowRoot.querySelector<HTMLButtonElement>(
-      '[part="close-dialog-button"]',
+      '[part="close-dialog-button"]'
     );
 
-    const enharmonicNoteButtonsDiv = this.#shadowRoot.querySelector<
-      HTMLDivElement
-    >(
-      "#enharmonic-note-buttons-div",
-    );
+    const enharmonicNoteButtonsDiv =
+      this.#shadowRoot.querySelector<HTMLDivElement>(
+        "#enharmonic-note-buttons-div"
+      );
 
-    const selectedNoteNameSpan = this.#shadowRoot.querySelector<
-      HTMLSpanElement
-    >(
-      "#selected-note-name-span",
-    );
+    const selectedNoteNameSpan =
+      this.#shadowRoot.querySelector<HTMLSpanElement>(
+        "#selected-note-name-span"
+      );
 
     if (
       !mainButton ||
@@ -347,7 +344,7 @@ export class EnharmonicNoteSelector extends HTMLElement {
       !selectedNoteNameSpan
     ) {
       throw new Error(
-        "EnharmonicNoteSelector: Critical elements not found in shadow DOM.",
+        "EnharmonicNoteSelector: Critical elements not found in shadow DOM."
       );
     }
 
@@ -373,27 +370,23 @@ export class EnharmonicNoteSelector extends HTMLElement {
 
     const buttonsHtml = noteGroups
       .map(
-        (notes, index) =>
-          /* HTML */ `<div
+        (notes, index) => /* HTML */ `<div
           class="note-group"
           role="group"
           aria-label="Pitch ${index}"
         >
-          ${
-            notes
-              .map(
-                (note) =>
-                  /* HTML */ `<button
+          ${notes
+            .map(
+              (note) => /* HTML */ `<button
                 part="note-button"
                 data-note-name="${note}"
                 data-note-integer="${index}"
               >
                 ${note}
-              </button>`,
-              )
-              .join("")
-          }
-        </div>`,
+              </button>`
+            )
+            .join("")}
+        </div>`
       )
       .join("");
 
@@ -411,14 +404,14 @@ export class EnharmonicNoteSelector extends HTMLElement {
       () => {
         this.#dialog.showModal();
       },
-      { signal },
+      { signal }
     );
 
     this.#enharmonicNoteButtonsDiv.addEventListener(
       "click",
       (event) => {
         const button = (event.target as HTMLElement).closest<HTMLButtonElement>(
-          '[part="note-button"]',
+          '[part="note-button"]'
         );
         if (button) {
           this.#selectedNoteName = button.dataset.noteName || null;
@@ -431,13 +424,13 @@ export class EnharmonicNoteSelector extends HTMLElement {
           this.#dispatchNoteSelectedEvent();
         }
       },
-      { signal },
+      { signal }
     );
 
     this.#closeDialogButton.addEventListener(
       "click",
       () => this.#dialog.close(),
-      { signal },
+      { signal }
     );
   }
 
@@ -448,7 +441,7 @@ export class EnharmonicNoteSelector extends HTMLElement {
   attributeChangedCallback(
     name: string,
     oldValue: string | null,
-    newValue: string | null,
+    newValue: string | null
   ) {
     if (oldValue === newValue) return;
     switch (name) {
@@ -471,7 +464,7 @@ export class EnharmonicNoteSelector extends HTMLElement {
       this.#mainButtonSlot.style.display = "none";
       this.#mainButton.setAttribute(
         "data-note-integer",
-        this.#selectedNoteInteger.toString(),
+        this.#selectedNoteInteger.toString()
       );
       this.#mainButton.ariaLabel = `${this.#selectedNoteName} selected`;
     } else {
@@ -504,12 +497,12 @@ export class EnharmonicNoteSelector extends HTMLElement {
             },
             bubbles: true,
             composed: true, // Allows event to cross Shadow DOM boundary
-          },
-        ),
+          }
+        )
       );
     } else {
       console.warn(
-        "attempted to dispatch enharmonic-note-selected event with null data",
+        "attempted to dispatch enharmonic-note-selected event with null data"
       );
     }
   }
