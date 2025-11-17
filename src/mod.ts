@@ -306,13 +306,13 @@ export class EnharmonicNoteSelector extends HTMLElement {
     super();
     this.#shadowRoot = this.attachShadow({ mode: "open" });
     this.#shadowRoot.appendChild(
-      enharmonicNoteSelectorTemplate.content.cloneNode(true)
+      enharmonicNoteSelectorTemplate.content.cloneNode(true),
     );
     this.#cacheDomElements();
   }
 
   connectedCallback() {
-    this.#buildNoteButtons();
+    this.#populateEnharmonicNoteButtonsDiv();
     this.#addEventListeners();
     this.#updateNoteSelectorButton();
     this.#syncSelectedNoteAttribute();
@@ -325,7 +325,7 @@ export class EnharmonicNoteSelector extends HTMLElement {
   attributeChangedCallback(
     name: string,
     oldValue: string | null,
-    newValue: string | null
+    newValue: string | null,
   ) {
     if (oldValue === newValue) return;
     switch (name) {
@@ -335,34 +335,37 @@ export class EnharmonicNoteSelector extends HTMLElement {
         }
         break;
       case "root-notes-only":
-        this.#buildNoteButtons();
+        this.#populateEnharmonicNoteButtonsDiv();
         break;
     }
   }
 
   #cacheDomElements() {
     const mainButton = this.#shadowRoot.querySelector<HTMLButtonElement>(
-      '[part="main-button"]'
+      '[part="main-button"]',
     );
 
     const mainButtonSlot = mainButton?.querySelector<HTMLSlotElement>("slot");
 
-    const dialog =
-      this.#shadowRoot.querySelector<HTMLDialogElement>('[part="dialog"]');
-
-    const closeDialogButton = this.#shadowRoot.querySelector<HTMLButtonElement>(
-      '[part="close-dialog-button"]'
+    const dialog = this.#shadowRoot.querySelector<HTMLDialogElement>(
+      '[part="dialog"]',
     );
 
-    const enharmonicNoteButtonsDiv =
-      this.#shadowRoot.querySelector<HTMLDivElement>(
-        "#enharmonic-note-buttons-div"
-      );
+    const closeDialogButton = this.#shadowRoot.querySelector<HTMLButtonElement>(
+      '[part="close-dialog-button"]',
+    );
 
-    const selectedNoteNameSpan =
-      this.#shadowRoot.querySelector<HTMLSpanElement>(
-        "#selected-note-name-span"
-      );
+    const enharmonicNoteButtonsDiv = this.#shadowRoot.querySelector<
+      HTMLDivElement
+    >(
+      "#enharmonic-note-buttons-div",
+    );
+
+    const selectedNoteNameSpan = this.#shadowRoot.querySelector<
+      HTMLSpanElement
+    >(
+      "#selected-note-name-span",
+    );
 
     if (
       !mainButton ||
@@ -373,7 +376,7 @@ export class EnharmonicNoteSelector extends HTMLElement {
       !selectedNoteNameSpan
     ) {
       throw new Error(
-        "EnharmonicNoteSelector: Critical elements not found in shadow DOM."
+        "EnharmonicNoteSelector: Critical elements not found in shadow DOM.",
       );
     }
 
@@ -385,34 +388,32 @@ export class EnharmonicNoteSelector extends HTMLElement {
     this.#selectedNoteNameSpan = selectedNoteNameSpan;
   }
 
-  #buildNoteButtons() {
+  #populateEnharmonicNoteButtonsDiv() {
     const noteGroups = this.rootNotesOnly
       ? enharmonicRootNoteGroups
       : enharmonicNoteNameGroups;
 
-    const buttonsHtml = noteGroups
-      .map(
-        (notes, index) => /* HTML */ `<div
-          class="note-group"
-          role="group"
-          aria-label="Pitch ${index}"
-        >
-          ${notes
-            .map(
-              (note) => /* HTML */ `<button
-                part="note-button"
-                data-note-name="${note}"
-                data-note-integer="${index}"
-              >
-                ${note}
-              </button>`
-            )
-            .join("")}
-        </div>`
-      )
-      .join("");
+    const frag = document.createDocumentFragment();
 
-    this.#enharmonicNoteButtonsDiv.innerHTML = buttonsHtml;
+    noteGroups.forEach((notes, index) => {
+      const group = document.createElement("div");
+      group.className = "note-group";
+      group.setAttribute("role", "group");
+      group.setAttribute("aria-label", `Pitch ${index}`);
+
+      notes.forEach((note) => {
+        const btn = document.createElement("button");
+        btn.setAttribute("part", "note-button");
+        btn.dataset.noteName = note;
+        btn.dataset.noteInteger = String(index);
+        btn.textContent = note;
+        group.appendChild(btn);
+      });
+
+      frag.appendChild(group);
+    });
+
+    this.#enharmonicNoteButtonsDiv.replaceChildren(frag);
   }
 
   #addEventListeners() {
@@ -426,14 +427,14 @@ export class EnharmonicNoteSelector extends HTMLElement {
       () => {
         this.#dialog.showModal();
       },
-      { signal }
+      { signal },
     );
 
     this.#enharmonicNoteButtonsDiv.addEventListener(
       "click",
       (event) => {
         const button = (event.target as HTMLElement).closest<HTMLButtonElement>(
-          '[part="note-button"]'
+          '[part="note-button"]',
         );
         if (button) {
           this.#selectedNoteName = button.dataset.noteName || null;
@@ -446,13 +447,13 @@ export class EnharmonicNoteSelector extends HTMLElement {
           this.#dispatchNoteSelectedEvent();
         }
       },
-      { signal }
+      { signal },
     );
 
     this.#closeDialogButton.addEventListener(
       "click",
       () => this.#dialog.close(),
-      { signal }
+      { signal },
     );
   }
 
@@ -464,7 +465,7 @@ export class EnharmonicNoteSelector extends HTMLElement {
       this.#mainButtonSlot.style.display = "none";
       this.#mainButton.setAttribute(
         "data-note-integer",
-        this.#selectedNoteInteger.toString()
+        this.#selectedNoteInteger.toString(),
       );
       this.#mainButton.ariaLabel = `${this.#selectedNoteName} selected`;
     } else {
@@ -497,12 +498,12 @@ export class EnharmonicNoteSelector extends HTMLElement {
             },
             bubbles: true,
             composed: true, // Allows event to cross Shadow DOM boundary
-          }
-        )
+          },
+        ),
       );
     } else {
       console.warn(
-        "attempted to dispatch enharmonic-note-selected event with null data"
+        "attempted to dispatch enharmonic-note-selected event with null data",
       );
     }
   }
