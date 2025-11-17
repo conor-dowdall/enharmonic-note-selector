@@ -282,13 +282,16 @@ export interface EnharmonicNoteSelectedEventDetail {
  * @fires enharmonic-note-selected - Dispatched when a note is selected by the user.
  */
 export class EnharmonicNoteSelector extends HTMLElement {
-  #shadowRoot: ShadowRoot;
+  #shadowRoot!: ShadowRoot;
 
-  #mainButton: HTMLButtonElement;
-  #noteSelectorDialog: HTMLDialogElement;
-  #closeDialogButton: HTMLButtonElement;
-  #enharmonicNoteButtonsDiv: HTMLDivElement;
-  #selectedNoteNameSpan: HTMLSpanElement;
+  // cache these critical elements in the constructor  with #cacheDomElements()
+  // and throw an error if they are not found
+  #mainButton!: HTMLButtonElement;
+  #mainButtonSlot!: HTMLSlotElement;
+  #dialog!: HTMLDialogElement;
+  #closeDialogButton!: HTMLButtonElement;
+  #enharmonicNoteButtonsDiv!: HTMLDivElement;
+  #selectedNoteNameSpan!: HTMLSpanElement;
 
   #abortController: AbortController | null = null;
   #selectedNoteName: string | null = null;
@@ -301,19 +304,23 @@ export class EnharmonicNoteSelector extends HTMLElement {
 
   constructor() {
     super();
-
     this.#shadowRoot = this.attachShadow({ mode: "open" });
     this.#shadowRoot.appendChild(
       enharmonicNoteSelectorTemplate.content.cloneNode(true),
     );
+    this.#cacheDomElements();
+  }
 
+  #cacheDomElements() {
     const mainButton = this.#shadowRoot.querySelector<HTMLButtonElement>(
       '[part="main-button"]',
     );
 
-    const noteSelectorDialog = this.#shadowRoot.querySelector<
-      HTMLDialogElement
-    >('[part="dialog"]');
+    const mainButtonSlot = mainButton?.querySelector<HTMLSlotElement>("slot");
+
+    const dialog = this.#shadowRoot.querySelector<HTMLDialogElement>(
+      '[part="dialog"]',
+    );
 
     const closeDialogButton = this.#shadowRoot.querySelector<HTMLButtonElement>(
       '[part="close-dialog-button"]',
@@ -333,7 +340,8 @@ export class EnharmonicNoteSelector extends HTMLElement {
 
     if (
       !mainButton ||
-      !noteSelectorDialog ||
+      !mainButtonSlot ||
+      !dialog ||
       !closeDialogButton ||
       !enharmonicNoteButtonsDiv ||
       !selectedNoteNameSpan
@@ -344,7 +352,8 @@ export class EnharmonicNoteSelector extends HTMLElement {
     }
 
     this.#mainButton = mainButton;
-    this.#noteSelectorDialog = noteSelectorDialog;
+    this.#mainButtonSlot = mainButtonSlot;
+    this.#dialog = dialog;
     this.#closeDialogButton = closeDialogButton;
     this.#enharmonicNoteButtonsDiv = enharmonicNoteButtonsDiv;
     this.#selectedNoteNameSpan = selectedNoteNameSpan;
@@ -352,46 +361,7 @@ export class EnharmonicNoteSelector extends HTMLElement {
 
   connectedCallback() {
     this.#buildNoteButtons();
-
-    // abort any previous controllers before creating a new one
-    this.#abortController?.abort();
-    this.#abortController = new AbortController();
-    const { signal } = this.#abortController;
-
-    this.#mainButton.addEventListener(
-      "click",
-      () => {
-        this.#noteSelectorDialog.showModal();
-      },
-      { signal },
-    );
-
-    this.#enharmonicNoteButtonsDiv.addEventListener(
-      "click",
-      (event) => {
-        const button = (event.target as HTMLElement).closest<HTMLButtonElement>(
-          '[part="note-button"]',
-        );
-        if (button) {
-          this.#selectedNoteName = button.dataset.noteName || null;
-          this.#selectedNoteInteger = button.dataset.noteInteger
-            ? (parseInt(button.dataset.noteInteger, 10) as RootNoteInteger)
-            : null;
-          this.#updateNoteSelectorButton();
-          this.#syncSelectedNoteAttribute();
-          this.#noteSelectorDialog.close();
-          this.#dispatchNoteSelectedEvent();
-        }
-      },
-      { signal },
-    );
-
-    this.#closeDialogButton.addEventListener(
-      "click",
-      () => this.#noteSelectorDialog.close(),
-      { signal },
-    );
-
+    this.#addEventListeners();
     this.#updateNoteSelectorButton();
     this.#syncSelectedNoteAttribute();
   }
@@ -430,6 +400,47 @@ export class EnharmonicNoteSelector extends HTMLElement {
     this.#enharmonicNoteButtonsDiv.innerHTML = buttonsHtml;
   }
 
+  #addEventListeners() {
+    // abort any previous controllers before creating a new one
+    this.#abortController?.abort();
+    this.#abortController = new AbortController();
+    const { signal } = this.#abortController;
+
+    this.#mainButton.addEventListener(
+      "click",
+      () => {
+        this.#dialog.showModal();
+      },
+      { signal },
+    );
+
+    this.#enharmonicNoteButtonsDiv.addEventListener(
+      "click",
+      (event) => {
+        const button = (event.target as HTMLElement).closest<HTMLButtonElement>(
+          '[part="note-button"]',
+        );
+        if (button) {
+          this.#selectedNoteName = button.dataset.noteName || null;
+          this.#selectedNoteInteger = button.dataset.noteInteger
+            ? (parseInt(button.dataset.noteInteger, 10) as RootNoteInteger)
+            : null;
+          this.#updateNoteSelectorButton();
+          this.#syncSelectedNoteAttribute();
+          this.#dialog.close();
+          this.#dispatchNoteSelectedEvent();
+        }
+      },
+      { signal },
+    );
+
+    this.#closeDialogButton.addEventListener(
+      "click",
+      () => this.#dialog.close(),
+      { signal },
+    );
+  }
+
   disconnectedCallback() {
     this.#abortController?.abort();
   }
@@ -453,11 +464,11 @@ export class EnharmonicNoteSelector extends HTMLElement {
   }
 
   #updateNoteSelectorButton() {
-    if (this.#selectedNoteName && this.#selectedNoteInteger !== null) {
+    if (this.#selectedNoteName !== null && this.#selectedNoteInteger !== null) {
       // State when a note is selected
       this.#selectedNoteNameSpan.textContent = this.#selectedNoteName;
       this.#selectedNoteNameSpan.style.display = "initial";
-      this.#mainButton.querySelector("slot")!.style.display = "none";
+      this.#mainButtonSlot.style.display = "none";
       this.#mainButton.setAttribute(
         "data-note-integer",
         this.#selectedNoteInteger.toString(),
@@ -466,8 +477,9 @@ export class EnharmonicNoteSelector extends HTMLElement {
     } else {
       // Default state when no note is selected
       this.#selectedNoteNameSpan.style.display = "none";
-      this.#mainButton.querySelector("slot")!.style.display = "initial";
+      this.#mainButtonSlot.style.display = "initial";
       this.#mainButton.removeAttribute("data-note-integer");
+
       this.#mainButton.ariaLabel = "Select Note";
     }
   }
