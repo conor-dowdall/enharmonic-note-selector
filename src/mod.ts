@@ -311,6 +311,35 @@ export class EnharmonicNoteSelector extends HTMLElement {
     this.#cacheDomElements();
   }
 
+  connectedCallback() {
+    this.#buildNoteButtons();
+    this.#addEventListeners();
+    this.#updateNoteSelectorButton();
+    this.#syncSelectedNoteAttribute();
+  }
+
+  disconnectedCallback() {
+    this.#abortController?.abort();
+  }
+
+  attributeChangedCallback(
+    name: string,
+    oldValue: string | null,
+    newValue: string | null
+  ) {
+    if (oldValue === newValue) return;
+    switch (name) {
+      case "selected-note-name":
+        if (newValue !== this.selectedNoteName) {
+          this.selectedNoteName = newValue;
+        }
+        break;
+      case "root-notes-only":
+        this.#buildNoteButtons();
+        break;
+    }
+  }
+
   #cacheDomElements() {
     const mainButton = this.#shadowRoot.querySelector<HTMLButtonElement>(
       '[part="main-button"]'
@@ -356,15 +385,8 @@ export class EnharmonicNoteSelector extends HTMLElement {
     this.#selectedNoteNameSpan = selectedNoteNameSpan;
   }
 
-  connectedCallback() {
-    this.#buildNoteButtons();
-    this.#addEventListeners();
-    this.#updateNoteSelectorButton();
-    this.#syncSelectedNoteAttribute();
-  }
-
   #buildNoteButtons() {
-    const noteGroups = this.hasAttribute("root-notes-only")
+    const noteGroups = this.rootNotesOnly
       ? enharmonicRootNoteGroups
       : enharmonicNoteNameGroups;
 
@@ -432,28 +454,6 @@ export class EnharmonicNoteSelector extends HTMLElement {
       () => this.#dialog.close(),
       { signal }
     );
-  }
-
-  disconnectedCallback() {
-    this.#abortController?.abort();
-  }
-
-  attributeChangedCallback(
-    name: string,
-    oldValue: string | null,
-    newValue: string | null
-  ) {
-    if (oldValue === newValue) return;
-    switch (name) {
-      case "selected-note-name":
-        if (newValue !== this.selectedNoteName) {
-          this.selectedNoteName = newValue;
-        }
-        break;
-      case "root-notes-only":
-        this.#buildNoteButtons();
-        break;
-    }
   }
 
   #updateNoteSelectorButton() {
@@ -567,7 +567,7 @@ export class EnharmonicNoteSelector extends HTMLElement {
    * Ensures the newly selected note is different from the current one.
    */
   setRandomNote() {
-    const noteGroups = this.hasAttribute("root-notes-only")
+    const noteGroups = this.rootNotesOnly
       ? enharmonicRootNoteGroups
       : enharmonicNoteNameGroups;
 
