@@ -288,11 +288,11 @@ export class EnharmonicNoteSelector extends HTMLElement {
   // cache these critical elements in the constructor with #cacheDomElements()
   // and throw an error if they are not found
   #mainButton!: HTMLButtonElement;
+  #mainButtonTextSpan!: HTMLSpanElement;
   #mainButtonSlot!: HTMLSlotElement;
   #dialog!: HTMLDialogElement;
   #closeDialogButton!: HTMLButtonElement;
   #enharmonicNoteButtonsDiv!: HTMLDivElement;
-  #mainButtonTextSpan!: HTMLSpanElement;
 
   #abortController: AbortController | null = null;
   #selectedNoteName: string | null = null;
@@ -346,6 +346,10 @@ export class EnharmonicNoteSelector extends HTMLElement {
       '[part="main-button"]',
     );
 
+    const mainButtonTextSpan = this.#shadowRoot.querySelector<HTMLSpanElement>(
+      "#main-button-text-span",
+    );
+
     const mainButtonSlot = mainButton?.querySelector<HTMLSlotElement>("slot");
 
     const dialog = this.#shadowRoot.querySelector<HTMLDialogElement>(
@@ -362,17 +366,13 @@ export class EnharmonicNoteSelector extends HTMLElement {
       "#enharmonic-note-buttons-div",
     );
 
-    const mainButtonTextSpan = this.#shadowRoot.querySelector<HTMLSpanElement>(
-      "#main-button-text-span",
-    );
-
     if (
       !mainButton ||
+      !mainButtonTextSpan ||
       !mainButtonSlot ||
       !dialog ||
       !closeDialogButton ||
-      !enharmonicNoteButtonsDiv ||
-      !mainButtonTextSpan
+      !enharmonicNoteButtonsDiv
     ) {
       throw new Error(
         "EnharmonicNoteSelector: Critical elements not found in shadow DOM.",
@@ -380,11 +380,11 @@ export class EnharmonicNoteSelector extends HTMLElement {
     }
 
     this.#mainButton = mainButton;
+    this.#mainButtonTextSpan = mainButtonTextSpan;
     this.#mainButtonSlot = mainButtonSlot;
     this.#dialog = dialog;
     this.#closeDialogButton = closeDialogButton;
     this.#enharmonicNoteButtonsDiv = enharmonicNoteButtonsDiv;
-    this.#mainButtonTextSpan = mainButtonTextSpan;
   }
 
   #populateEnharmonicNoteButtonsDiv() {
@@ -472,7 +472,6 @@ export class EnharmonicNoteSelector extends HTMLElement {
       this.#mainButtonTextSpan.style.display = "none";
       this.#mainButtonSlot.style.display = "initial";
       this.#mainButton.removeAttribute("data-note-integer");
-
       this.#mainButton.ariaLabel = "Select Note";
     }
   }
