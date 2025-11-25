@@ -246,7 +246,7 @@ enharmonicNoteSelectorTemplate.innerHTML = /* HTML */ `
   </button>
 
   <dialog part="dialog" aria-labelledby="dialog-heading">
-    <button part="close-dialog-button">
+    <button part="close-dialog-button" aria-label="Close Dialog">
       <slot name="close-dialog-icon">
         <!-- Default icon when no note is selected. Can be overridden by the user. 
          This SVG is part of the project and is licensed under CC0 1.0 Universal. -->
@@ -273,9 +273,9 @@ enharmonicNoteSelectorTemplate.innerHTML = /* HTML */ `
  */
 export interface EnharmonicNoteSelectedEventDetail {
   /** The string name of the selected note (e.g., "C♯", "D♭"). */
-  noteName: string;
+  noteName: string | null;
   /** The integer representation of the note's pitch (0-11), where C=0. */
-  noteInteger: RootNoteInteger;
+  noteInteger: RootNoteInteger | null;
 }
 
 /**
@@ -485,25 +485,19 @@ export class EnharmonicNoteSelector extends HTMLElement {
   }
 
   #dispatchNoteSelectedEvent() {
-    if (this.#selectedNoteName !== null && this.#selectedNoteInteger !== null) {
-      this.dispatchEvent(
-        new CustomEvent<EnharmonicNoteSelectedEventDetail>(
-          "enharmonic-note-selected",
-          {
-            detail: {
-              noteName: this.#selectedNoteName,
-              noteInteger: this.#selectedNoteInteger,
-            },
-            bubbles: true,
-            composed: true, // Allows event to cross Shadow DOM boundary
+    this.dispatchEvent(
+      new CustomEvent<EnharmonicNoteSelectedEventDetail>(
+        "enharmonic-note-selected",
+        {
+          detail: {
+            noteName: this.#selectedNoteName,
+            noteInteger: this.#selectedNoteInteger,
           },
-        ),
-      );
-    } else {
-      console.warn(
-        "attempted to dispatch enharmonic-note-selected event with null data",
-      );
-    }
+          bubbles: true,
+          composed: true, // Allows event to cross Shadow DOM boundary
+        },
+      ),
+    );
   }
 
   /**

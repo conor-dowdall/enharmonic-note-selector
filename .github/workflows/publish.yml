@@ -1,5 +1,4 @@
-name: Publish Package
-
+name: Publish
 on:
   push:
     tags:
@@ -14,9 +13,9 @@ jobs:
       id-token: write
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - name: Publish to JSR
+      - name: Publish package
         run: npx jsr publish
 
       - name: Make npm preparation script executable
@@ -26,14 +25,12 @@ jobs:
         run: ./prepare-npm.sh
 
       - name: Set up Node.js for NPM publishing
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: "20"
+          node-version: "latest"
+          check-latest: true
           scope: "@musodojo"
           registry-url: "https://registry.npmjs.org"
-
-      - name: Update npm
-        run: npm install -g npm@latest
 
       - name: Publish to NPM
         run: npm publish ./npm --access public
