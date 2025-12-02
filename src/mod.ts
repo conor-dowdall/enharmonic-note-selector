@@ -27,12 +27,14 @@
  */
 
 import {
-  type ColorGroup,
   enharmonicNoteNameGroups,
   enharmonicRootNoteGroups,
   getContrastColor,
-  type NoteName,
-  type RootNoteInteger,
+} from "@musodojo/music-theory-data";
+import type {
+  ColorGroup,
+  NoteName,
+  RootNoteInteger,
 } from "@musodojo/music-theory-data";
 
 const enharmonicNoteSelectorTemplate = document.createElement("template");
@@ -78,42 +80,6 @@ enharmonicNoteSelectorTemplate.innerHTML = /* HTML */ `
 
       display: inline-block;
       font-size: inherit;
-    }
-
-    button {
-      font: inherit;
-      margin: 0;
-      padding: 0;
-      cursor: pointer;
-      background: none;
-      border: none;
-    }
-
-    svg {
-      fill: currentColor;
-    }
-
-    [part="main-button"] {
-      display: grid;
-      place-items: center;
-
-      min-width: var(--_main-icon-size);
-
-      > #main-button-text-span {
-        grid-area: 1 / 1;
-      }
-
-      > slot {
-        height: var(--_main-icon-size);
-      }
-
-      ::slotted(svg),
-      ::slotted(img),
-      > slot > svg {
-        grid-area: 1 / 1;
-        width: var(--_main-icon-size);
-        height: var(--_main-icon-size);
-      }
     }
 
     [part="main-button"],
@@ -172,10 +138,48 @@ enharmonicNoteSelectorTemplate.innerHTML = /* HTML */ `
       }
     }
 
+    button {
+      font: inherit;
+      margin: 0;
+      padding: 0;
+      cursor: pointer;
+      background: none;
+      border: none;
+    }
+
+    svg {
+      fill: currentColor;
+    }
+
+    [part="main-button"] {
+      display: grid;
+      place-items: center;
+
+      min-width: var(--_main-icon-size);
+
+      & > #main-button-text-span {
+        grid-area: 1 / 1;
+      }
+
+      & > slot {
+        height: var(--_main-icon-size);
+      }
+
+      /* Size icons, but let text content flow naturally */
+      & > ::slotted(svg),
+      & > ::slotted(img),
+      & > slot > svg {
+        width: var(--_main-icon-size);
+        height: var(--_main-icon-size);
+        /* Ensure icons are on the same grid cell if multiple are slotted */
+        grid-area: 1 / 1;
+      }
+    }
+
     [part="dialog"] {
       padding: var(--_default-spacing);
 
-      > [part="close-dialog-button"] {
+      & > [part="close-dialog-button"] {
         display: grid;
         place-items: center;
         padding: var(--_default-spacing);
@@ -184,9 +188,9 @@ enharmonicNoteSelectorTemplate.innerHTML = /* HTML */ `
         margin-block-end: var(--_default-spacing);
 
         /* Size icons, but let text content flow naturally */
-        ::slotted(svg),
-        ::slotted(img),
-        > slot[name="close-dialog-icon"] > svg {
+        & > ::slotted(svg),
+        & > ::slotted(img),
+        & > slot[name="close-dialog-icon"] > svg {
           width: var(--_close-dialog-icon-size);
           height: var(--_close-dialog-icon-size);
           /* Ensure icons are on the same grid cell if multiple are slotted */
@@ -194,30 +198,39 @@ enharmonicNoteSelectorTemplate.innerHTML = /* HTML */ `
         }
       }
 
-      > #enharmonic-note-buttons-div {
+      & > #enharmonic-note-buttons-div {
         display: flex;
         flex-direction: column;
         gap: var(--_default-spacing);
 
-        > .note-group {
+        & > .note-group {
           display: flex;
           flex-wrap: nowrap;
           gap: var(--_default-spacing);
 
-          > [part="note-button"] {
+          & > [part="note-button"] {
             width: 7ch;
             height: 3.5ch;
-            border: 1px solid
-              light-dark(rgb(0 0 0 / 50%), rgb(255 255 255 / 50%));
+            border: 0.1em solid light-dark(black, white);
             corner-shape: squircle;
             border-radius: 0.5em;
+
+            &[data-selected="true"] {
+              outline: 0.3em double light-dark(black, white);
+            }
           }
         }
       }
-    }
 
-    [part="dialog"]::backdrop {
-      background: var(--_dialog-backdrop-background);
+      & > [part="clear-button"] {
+        margin-block-start: var(--_default-spacing);
+        width: 100%;
+        padding: 0.5em;
+      }
+
+      &::backdrop {
+        background: var(--_dialog-backdrop-background);
+      }
     }
 
     .visually-hidden {
@@ -265,6 +278,8 @@ enharmonicNoteSelectorTemplate.innerHTML = /* HTML */ `
       <!-- the buttons in here are dynamically generated 
        each with an attribute of part="note-button" -->
     </div>
+
+    <button part="clear-button">Clear Selection</button>
   </dialog>
 `;
 
@@ -293,6 +308,7 @@ export class EnharmonicNoteSelector extends HTMLElement {
   #dialog!: HTMLDialogElement;
   #closeDialogButton!: HTMLButtonElement;
   #enharmonicNoteButtonsDiv!: HTMLDivElement;
+  #clearButton!: HTMLButtonElement;
 
   #abortController: AbortController | null = null;
   #selectedNoteName: string | null = null;
@@ -315,8 +331,9 @@ export class EnharmonicNoteSelector extends HTMLElement {
   connectedCallback() {
     this.#populateEnharmonicNoteButtonsDiv();
     this.#addEventListeners();
+    this.#updateSelectedNoteButtonState();
     this.#updateMainButton();
-    this.#syncSelectedNoteAttribute();
+    this.#syncSelectedNoteNameAttribute();
   }
 
   disconnectedCallback() {
@@ -328,12 +345,13 @@ export class EnharmonicNoteSelector extends HTMLElement {
     oldValue: string | null,
     newValue: string | null,
   ) {
+    // Only proceed if the attribute's value has actually changed
     if (oldValue === newValue) return;
+
     switch (name) {
       case "selected-note-name":
-        if (newValue !== this.selectedNoteName) {
-          this.selectedNoteName = newValue;
-        }
+        // Let the setter handle the logic, then dispatch the event.
+        this.selectedNoteName = newValue;
         break;
       case "root-notes-only":
         this.#populateEnharmonicNoteButtonsDiv();
@@ -366,13 +384,18 @@ export class EnharmonicNoteSelector extends HTMLElement {
       "#enharmonic-note-buttons-div",
     );
 
+    const clearButton = this.#shadowRoot.querySelector<HTMLButtonElement>(
+      '[part="clear-button"]',
+    );
+
     if (
       !mainButton ||
       !mainButtonTextSpan ||
       !mainButtonSlot ||
       !dialog ||
       !closeDialogButton ||
-      !enharmonicNoteButtonsDiv
+      !enharmonicNoteButtonsDiv ||
+      !clearButton
     ) {
       throw new Error(
         "EnharmonicNoteSelector: Critical elements not found in shadow DOM.",
@@ -385,16 +408,13 @@ export class EnharmonicNoteSelector extends HTMLElement {
     this.#dialog = dialog;
     this.#closeDialogButton = closeDialogButton;
     this.#enharmonicNoteButtonsDiv = enharmonicNoteButtonsDiv;
+    this.#clearButton = clearButton;
   }
 
   #populateEnharmonicNoteButtonsDiv() {
-    const noteGroups = this.rootNotesOnly
-      ? enharmonicRootNoteGroups
-      : enharmonicNoteNameGroups;
-
     const frag = document.createDocumentFragment();
 
-    noteGroups.forEach((notes, index) => {
+    this.#noteGroups.forEach((notes, index) => {
       const group = document.createElement("div");
       group.className = "note-group";
       group.setAttribute("role", "group");
@@ -429,6 +449,12 @@ export class EnharmonicNoteSelector extends HTMLElement {
       { signal },
     );
 
+    this.#closeDialogButton.addEventListener(
+      "click",
+      () => this.#dialog.close(),
+      { signal },
+    );
+
     this.#enharmonicNoteButtonsDiv.addEventListener(
       "click",
       (event) => {
@@ -436,32 +462,34 @@ export class EnharmonicNoteSelector extends HTMLElement {
           '[part="note-button"]',
         );
         if (button) {
-          this.#selectedNoteName = button.dataset.noteName || null;
-          this.#selectedNoteInteger = button.dataset.noteInteger
-            ? (parseInt(button.dataset.noteInteger, 10) as RootNoteInteger)
-            : null;
-          this.#updateMainButton();
-          this.#syncSelectedNoteAttribute();
+          this.selectedNoteName = button.dataset.noteName || null;
           this.#dialog.close();
-          this.#dispatchNoteSelectedEvent();
+        } else {
+          console.warn("no note button found");
         }
       },
       { signal },
     );
 
-    this.#closeDialogButton.addEventListener(
+    this.#clearButton.addEventListener(
       "click",
-      () => this.#dialog.close(),
+      () => {
+        this.selectedNoteName = null;
+        this.#dialog.close();
+      },
       { signal },
     );
   }
 
   #updateMainButton() {
     if (this.#selectedNoteName !== null && this.#selectedNoteInteger !== null) {
-      // State when a note is selected
+      // update the note name text
       this.#mainButtonTextSpan.textContent = this.#selectedNoteName;
+      // show the text
       this.#mainButtonTextSpan.style.display = "initial";
+      // hide the icon slot
       this.#mainButtonSlot.style.display = "none";
+      // update the note integer attribute
       this.#mainButton.setAttribute(
         "data-note-integer",
         this.#selectedNoteInteger.toString(),
@@ -476,7 +504,25 @@ export class EnharmonicNoteSelector extends HTMLElement {
     }
   }
 
-  #syncSelectedNoteAttribute() {
+  #updateSelectedNoteButtonState() {
+    // Clear the highlight from any previously selected button
+    const previouslySelectedButton = this.#enharmonicNoteButtonsDiv
+      .querySelector<HTMLButtonElement>(
+        '[data-selected="true"]',
+      );
+    previouslySelectedButton?.removeAttribute("data-selected");
+
+    // Add the highlight to the newly selected button
+    if (this.#selectedNoteName) {
+      const newSelectedButton = this.#enharmonicNoteButtonsDiv.querySelector<
+        HTMLButtonElement
+      >(
+        `[data-note-name="${this.#selectedNoteName}"]`,
+      );
+      newSelectedButton?.setAttribute("data-selected", "true");
+    }
+  }
+  #syncSelectedNoteNameAttribute() {
     if (this.#selectedNoteName) {
       this.setAttribute("selected-note-name", this.#selectedNoteName);
     } else {
@@ -511,16 +557,14 @@ export class EnharmonicNoteSelector extends HTMLElement {
   set selectedNoteName(newNote: string | null) {
     if (this.#selectedNoteName === newNote) return;
 
+    const previousNoteName = this.#selectedNoteName;
+
     // Reset values until proven valid
     this.#selectedNoteName = null;
     this.#selectedNoteInteger = null;
 
     if (newNote !== null) {
-      const noteGroups = this.rootNotesOnly
-        ? enharmonicRootNoteGroups
-        : enharmonicNoteNameGroups;
-
-      const noteIndex = noteGroups.findIndex((group) =>
+      const noteIndex = this.#noteGroups.findIndex((group) =>
         group.includes(newNote as NoteName)
       );
 
@@ -533,10 +577,14 @@ export class EnharmonicNoteSelector extends HTMLElement {
     // Only update the button and attribute if the component is connected to the DOM
     if (this.isConnected) {
       this.#updateMainButton();
-      this.#syncSelectedNoteAttribute();
+      this.#updateSelectedNoteButtonState();
+      this.#syncSelectedNoteNameAttribute();
+      // Only dispatch if the value has actually changed to avoid redundant events
+      // on initialization or if the setter was called with the same value.
+      if (this.#selectedNoteName !== previousNoteName) {
+        this.#dispatchNoteSelectedEvent();
+      }
     }
-
-    this.#dispatchNoteSelectedEvent();
   }
 
   /**
@@ -560,18 +608,22 @@ export class EnharmonicNoteSelector extends HTMLElement {
    * Ensures the newly selected note is different from the current one.
    */
   setRandomNote() {
-    const noteGroups = this.rootNotesOnly
-      ? enharmonicRootNoteGroups
-      : enharmonicNoteNameGroups;
-
+    const noteGroups = this.#noteGroups;
     let randomNote: string;
 
     // Keep selecting a random note until it's different from the current one.
     do {
-      const randomIndex = Math.floor(Math.random() * noteGroups.length);
-      const randomNoteGroup = noteGroups[randomIndex];
-      randomNote =
-        randomNoteGroup[Math.floor(Math.random() * randomNoteGroup.length)];
+      // random note-group
+      const randomNoteGroupIndex = Math.floor(
+        Math.random() * noteGroups.length,
+      );
+      const randomNoteGroup = noteGroups[randomNoteGroupIndex];
+
+      // random note in the note-group
+      const randomNoteInGroupIndex = Math.floor(
+        Math.random() * randomNoteGroup.length,
+      );
+      randomNote = randomNoteGroup[randomNoteInGroupIndex];
     } while (randomNote === this.selectedNoteName);
 
     this.selectedNoteName = randomNote;
@@ -613,6 +665,12 @@ export class EnharmonicNoteSelector extends HTMLElement {
         this.style.setProperty(`--note-text-color-${i}`, null);
       }
     }
+  }
+
+  get #noteGroups() {
+    return this.rootNotesOnly
+      ? enharmonicRootNoteGroups
+      : enharmonicNoteNameGroups;
   }
 }
 

@@ -25,11 +25,7 @@
       enharmonic-note-selector {
         --_border-color: light-dark(rgb(255, 0, 0), rgb(128, 200, 255));
         --_shadow-color: light-dark(rgb(255, 0, 0), rgb(255, 255, 255));
-
-        &::part(main-button) {
-          font-size: 1.3em;
-          margin-inline-start: 0.2em;
-        }
+        margin-inline-start: 0.2em;
 
         &::part(dialog) {
           border-radius: 0.5em;
@@ -38,7 +34,8 @@
         }
 
         &::part(note-button),
-        &::part(close-dialog-button) {
+        &::part(close-dialog-button),
+        &::part(clear-button) {
           border-radius: 0.5em;
           border: 0.2em solid var(--_border-color);
           box-shadow: 0 0 0.5em var(--_shadow-color);

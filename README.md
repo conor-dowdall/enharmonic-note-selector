@@ -136,6 +136,26 @@ enharmonic-note-selector::part(dialog)::backdrop {
 }
 ```
 
+Style each note button part using `::part(note-button)`
+
+```css
+enharmonic-note-selector::part(note-button) {
+  border-radius: 0.5em;
+  border: 0.2em solid white;
+  box-shadow: 0 0 0.5em black;
+}
+```
+
+Style the "Clear Selection" button part using `::part(clear-button)`
+
+```css
+enharmonic-note-selector::part(clear-button) {
+  border-radius: 0.5em;
+  border: 0.2em solid white;
+  box-shadow: 0 0 0.5em black;
+}
+```
+
 The CSS Custom properties `--dialog-backdrop-background` and `--default-spacing`
 are also provided.
 
