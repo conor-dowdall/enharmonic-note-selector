@@ -333,7 +333,7 @@ export class EnharmonicNoteSelector extends HTMLElement {
   connectedCallback() {
     this.#populateEnharmonicNoteButtonsDiv();
     this.#addEventListeners();
-    this.#updateSelectedNoteButtonState();
+    this.#updateSelectedButtonElementState();
     this.#updateMainButton();
     this.#syncSelectedNoteNameAttribute();
   }
@@ -508,7 +508,7 @@ export class EnharmonicNoteSelector extends HTMLElement {
     }
   }
 
-  #updateSelectedNoteButtonState() {
+  #updateSelectedButtonElementState() {
     // Clear the highlight from the previously selected button
     if (this.#selectedButtonElement) {
       this.#selectedButtonElement.removeAttribute("data-selected");
@@ -581,7 +581,7 @@ export class EnharmonicNoteSelector extends HTMLElement {
     // Only update the button and attribute if the component is connected to the DOM
     if (this.isConnected) {
       this.#updateMainButton();
-      this.#updateSelectedNoteButtonState();
+      this.#updateSelectedButtonElementState();
       this.#syncSelectedNoteNameAttribute();
       // Only dispatch if the value has actually changed to avoid redundant events
       // on initialization or if the setter was called with the same value.
