@@ -310,11 +310,12 @@ export class EnharmonicNoteSelector extends HTMLElement {
   #enharmonicNoteButtonsDiv!: HTMLDivElement;
   #clearSelectionButton!: HTMLButtonElement;
 
+  #selectedButtonElement: HTMLButtonElement | null = null;
+
   #abortController: AbortController | null = null;
   #selectedNoteName: string | null = null;
   #selectedNoteInteger: RootNoteInteger | null = null;
   #noteColorGroup: ColorGroup | null = null;
-  #selectedButtonElement: HTMLButtonElement | null = null;
 
   static get observedAttributes(): string[] {
     return ["selected-note-name", "root-notes-only"];
