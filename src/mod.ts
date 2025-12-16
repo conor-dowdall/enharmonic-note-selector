@@ -314,6 +314,7 @@ export class EnharmonicNoteSelector extends HTMLElement {
   #selectedNoteName: string | null = null;
   #selectedNoteInteger: RootNoteInteger | null = null;
   #noteColorGroup: ColorGroup | null = null;
+  #selectedButtonElement: HTMLButtonElement | null = null;
 
   static get observedAttributes(): string[] {
     return ["selected-note-name", "root-notes-only"];
@@ -507,12 +508,11 @@ export class EnharmonicNoteSelector extends HTMLElement {
   }
 
   #updateSelectedNoteButtonState() {
-    // Clear the highlight from any previously selected button
-    const previouslySelectedButton = this.#enharmonicNoteButtonsDiv
-      .querySelector<HTMLButtonElement>(
-        '[data-selected="true"]',
-      );
-    previouslySelectedButton?.removeAttribute("data-selected");
+    // Clear the highlight from the previously selected button
+    if (this.#selectedButtonElement) {
+      this.#selectedButtonElement.removeAttribute("data-selected");
+      this.#selectedButtonElement = null;
+    }
 
     // Add the highlight to the newly selected button
     if (this.#selectedNoteName) {
@@ -522,6 +522,7 @@ export class EnharmonicNoteSelector extends HTMLElement {
         `[data-note-name="${this.#selectedNoteName}"]`,
       );
       newSelectedButton?.setAttribute("data-selected", "true");
+      this.#selectedButtonElement = newSelectedButton;
     }
   }
   #syncSelectedNoteNameAttribute() {
