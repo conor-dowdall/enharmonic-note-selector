@@ -526,6 +526,7 @@ export class EnharmonicNoteSelector extends HTMLElement {
       this.#selectedButtonElement = newSelectedButton;
     }
   }
+
   #syncSelectedNoteNameAttribute() {
     if (this.#selectedNoteName) {
       this.setAttribute("selected-note-name", this.#selectedNoteName);
