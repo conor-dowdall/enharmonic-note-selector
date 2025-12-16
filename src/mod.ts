@@ -466,7 +466,7 @@ export class EnharmonicNoteSelector extends HTMLElement {
           '[part="note-button"]',
         );
         if (button) {
-          this.selectedNoteName = button.dataset.noteName || null;
+          this.selectedNoteName = button.dataset.noteName ?? null;
           this.#dialog.close();
         } else {
           console.warn("no note button found");
