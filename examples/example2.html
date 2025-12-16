@@ -19,7 +19,7 @@
 
       .wrapper {
         display: flex;
-        align-items: baseline;
+        align-items: flex-end;
       }
 
       enharmonic-note-selector {
@@ -43,6 +43,7 @@
       }
     </style>
   </head>
+
   <body>
     <h1>Create a Note Sequence</h1>
     <p>by clicking a note and selecting from the dialog</p>
@@ -62,6 +63,14 @@
       <enharmonic-note-selector
         selected-note-name="G"
       ></enharmonic-note-selector>
+    </div>
+    <br />
+    <div class="wrapper">
+      <enharmonic-note-selector></enharmonic-note-selector>,
+      <enharmonic-note-selector></enharmonic-note-selector>,
+      <enharmonic-note-selector></enharmonic-note-selector>,
+      <enharmonic-note-selector></enharmonic-note-selector>,
+      <enharmonic-note-selector></enharmonic-note-selector>
     </div>
     <script type="module" src="../dist/bundle.js"></script>
   </body>
