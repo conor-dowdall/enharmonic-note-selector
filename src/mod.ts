@@ -222,7 +222,7 @@ enharmonicNoteSelectorTemplate.innerHTML = /* HTML */ `
         }
       }
 
-      & > [part="clear-button"] {
+      & > [part="clear-selection-button"] {
         margin-block-start: var(--_default-spacing);
         width: 100%;
         padding: 0.5em;
@@ -279,7 +279,7 @@ enharmonicNoteSelectorTemplate.innerHTML = /* HTML */ `
        each with an attribute of part="note-button" -->
     </div>
 
-    <button part="clear-button">Clear Selection</button>
+    <button part="clear-selection-button">Clear Selection</button>
   </dialog>
 `;
 
@@ -308,7 +308,7 @@ export class EnharmonicNoteSelector extends HTMLElement {
   #dialog!: HTMLDialogElement;
   #closeDialogButton!: HTMLButtonElement;
   #enharmonicNoteButtonsDiv!: HTMLDivElement;
-  #clearButton!: HTMLButtonElement;
+  #clearSelectionButton!: HTMLButtonElement;
 
   #abortController: AbortController | null = null;
   #selectedNoteName: string | null = null;
@@ -384,8 +384,10 @@ export class EnharmonicNoteSelector extends HTMLElement {
       "#enharmonic-note-buttons-div",
     );
 
-    const clearButton = this.#shadowRoot.querySelector<HTMLButtonElement>(
-      '[part="clear-button"]',
+    const clearSelectionButton = this.#shadowRoot.querySelector<
+      HTMLButtonElement
+    >(
+      '[part="clear-selection-button"]',
     );
 
     if (
@@ -395,7 +397,7 @@ export class EnharmonicNoteSelector extends HTMLElement {
       !dialog ||
       !closeDialogButton ||
       !enharmonicNoteButtonsDiv ||
-      !clearButton
+      !clearSelectionButton
     ) {
       throw new Error(
         "EnharmonicNoteSelector: Critical elements not found in shadow DOM.",
@@ -408,7 +410,7 @@ export class EnharmonicNoteSelector extends HTMLElement {
     this.#dialog = dialog;
     this.#closeDialogButton = closeDialogButton;
     this.#enharmonicNoteButtonsDiv = enharmonicNoteButtonsDiv;
-    this.#clearButton = clearButton;
+    this.#clearSelectionButton = clearSelectionButton;
   }
 
   #populateEnharmonicNoteButtonsDiv() {
@@ -471,7 +473,7 @@ export class EnharmonicNoteSelector extends HTMLElement {
       { signal },
     );
 
-    this.#clearButton.addEventListener(
+    this.#clearSelectionButton.addEventListener(
       "click",
       () => {
         this.selectedNoteName = null;
