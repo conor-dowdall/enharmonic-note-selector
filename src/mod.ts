@@ -561,8 +561,6 @@ export class EnharmonicNoteSelector extends HTMLElement {
   set selectedNoteName(newNote: string | null) {
     if (this.#selectedNoteName === newNote) return;
 
-    const previousNoteName = this.#selectedNoteName;
-
     // Reset values until proven valid
     this.#selectedNoteName = null;
     this.#selectedNoteInteger = null;
