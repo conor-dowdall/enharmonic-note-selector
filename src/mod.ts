@@ -352,12 +352,13 @@ export class EnharmonicNoteSelector extends HTMLElement {
 
     switch (name) {
       case "selected-note-name":
-        // Let the setter handle the logic, then dispatch the event.
         this.selectedNoteName = newValue;
         break;
       case "root-notes-only":
         this.#populateEnharmonicNoteButtonsDiv();
         break;
+      default:
+        console.log("Unexpected attribute changed:", name);
     }
   }
 
