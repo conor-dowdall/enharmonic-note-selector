@@ -583,11 +583,7 @@ export class EnharmonicNoteSelector extends HTMLElement {
       this.#updateMainButton();
       this.#updateSelectedButtonElementState();
       this.#syncSelectedNoteNameAttribute();
-      // Only dispatch if the value has actually changed to avoid redundant events
-      // on initialization or if the setter was called with the same value.
-      if (this.#selectedNoteName !== previousNoteName) {
-        this.#dispatchNoteSelectedEvent();
-      }
+      this.#dispatchNoteSelectedEvent();
     }
   }
 
