@@ -310,17 +310,28 @@ export class EnharmonicNoteSelector extends HTMLElement {
   #enharmonicNoteButtonsDiv!: HTMLDivElement;
   #clearSelectionButton!: HTMLButtonElement;
 
+  /** Caches the currently selected button element in the dialog to avoid re-querying the DOM. */
   #selectedButtonElement: HTMLButtonElement | null = null;
 
+  /** Manages event listeners to allow for cleanup on disconnection. */
   #abortController: AbortController | null = null;
+  /** The internal state for the selected note's string name (e.g., "C♯"). */
   #selectedNoteName: string | null = null;
+  /** The internal state for the selected note's integer value (0-11). */
   #selectedNoteInteger: RootNoteInteger | null = null;
+  /** The internal state for the currently applied color group. */
   #noteColorGroup: ColorGroup | null = null;
 
+  /**
+   * Specifies which attributes should trigger `attributeChangedCallback` when they change.
+   */
   static get observedAttributes(): string[] {
     return ["selected-note-name", "root-notes-only"];
   }
 
+  /**
+   * Initializes the component by creating the shadow DOM and caching essential elements.
+   */
   constructor() {
     super();
     this.#shadowRoot = this.attachShadow({ mode: "open" });
@@ -330,18 +341,31 @@ export class EnharmonicNoteSelector extends HTMLElement {
     this.#cacheDomElements();
   }
 
+  /**
+   * Called when the element is inserted into the DOM.
+   * Finalizes setup by populating dynamic content and attaching event listeners.
+   */
   connectedCallback() {
     this.#populateEnharmonicNoteButtonsDiv();
     this.#addEventListeners();
     this.#updateSelectedButtonElementState();
     this.#updateMainButton();
-    this.#syncSelectedNoteNameAttribute();
   }
 
+  /**
+   * Called when the element is removed from the DOM.
+   * Cleans up by aborting any pending operations and removing event listeners.
+   */
   disconnectedCallback() {
     this.#abortController?.abort();
   }
 
+  /**
+   * Called when an observed attribute of the custom element is added, removed, or changed.
+   * @param name - The name of the attribute that changed.
+   * @param oldValue - The old value of the attribute.
+   * @param newValue - The new value of the attribute.
+   */
   attributeChangedCallback(
     name: string,
     oldValue: string | null,
@@ -362,6 +386,10 @@ export class EnharmonicNoteSelector extends HTMLElement {
     }
   }
 
+  /**
+   * Queries the shadow DOM for critical elements and caches them as private properties.
+   * Throws an error if any required element is not found, failing early.
+   */
   #cacheDomElements() {
     const mainButton = this.#shadowRoot.querySelector<HTMLButtonElement>(
       '[part="main-button"]',
@@ -416,6 +444,10 @@ export class EnharmonicNoteSelector extends HTMLElement {
     this.#clearSelectionButton = clearSelectionButton;
   }
 
+  /**
+   * Dynamically generates and populates the note selection buttons in the dialog.
+   * The set of notes can be restricted based on the `root-notes-only` attribute.
+   */
   #populateEnharmonicNoteButtonsDiv() {
     const frag = document.createDocumentFragment();
 
@@ -440,6 +472,10 @@ export class EnharmonicNoteSelector extends HTMLElement {
     this.#enharmonicNoteButtonsDiv.replaceChildren(frag);
   }
 
+  /**
+   * Attaches all necessary event listeners for the component's interactive elements.
+   * Uses an AbortController to facilitate easy cleanup on disconnection.
+   */
   #addEventListeners() {
     // abort any previous controllers before creating a new one
     this.#abortController?.abort();
@@ -484,6 +520,10 @@ export class EnharmonicNoteSelector extends HTMLElement {
     );
   }
 
+  /**
+   * Updates the main button's appearance and accessibility attributes
+   * based on whether a note is currently selected.
+   */
   #updateMainButton() {
     if (this.#selectedNoteName !== null && this.#selectedNoteInteger !== null) {
       // update the note name text
@@ -507,6 +547,10 @@ export class EnharmonicNoteSelector extends HTMLElement {
     }
   }
 
+  /**
+   * Manages the visual state of the note buttons inside the dialog.
+   * It removes the highlight from the old button and applies it to the new one.
+   */
   #updateSelectedButtonElementState() {
     // Clear the highlight from the previously selected button
     if (this.#selectedButtonElement) {
@@ -526,6 +570,10 @@ export class EnharmonicNoteSelector extends HTMLElement {
     }
   }
 
+  /**
+   * Ensures the `selected-note-name` attribute on the host element is
+   * synchronized with the internal `#selectedNoteName` state.
+   */
   #syncSelectedNoteNameAttribute() {
     if (this.#selectedNoteName) {
       this.setAttribute("selected-note-name", this.#selectedNoteName);
@@ -534,6 +582,10 @@ export class EnharmonicNoteSelector extends HTMLElement {
     }
   }
 
+  /**
+   * Dispatches a `enharmonic-note-selected` custom event with details
+   * about the newly selected note.
+   */
   #dispatchNoteSelectedEvent() {
     this.dispatchEvent(
       new CustomEvent<EnharmonicNoteSelectedEventDetail>(
@@ -558,10 +610,15 @@ export class EnharmonicNoteSelector extends HTMLElement {
     return this.#selectedNoteName;
   }
 
+  /**
+   * Sets the selected note.
+   * @param {string | null} newNote - The new note name to select, or null to clear the selection.
+   */
   set selectedNoteName(newNote: string | null) {
     if (this.#selectedNoteName === newNote) return;
 
     // Reset values until proven valid
+    const previousNoteName = this.#selectedNoteName;
     this.#selectedNoteName = null;
     this.#selectedNoteInteger = null;
 
@@ -576,13 +633,17 @@ export class EnharmonicNoteSelector extends HTMLElement {
       }
     }
 
-    this.#syncSelectedNoteNameAttribute();
-
-    // Only update the button and attribute if the component is connected to the DOM
+    // Only perform DOM updates and dispatch events if the component is connected
+    // and the value has actually changed.
     if (this.isConnected) {
+      // Sync attribute immediately, as it's safe even if disconnected,
+      // but here we do it before dispatching the event.
+      this.#syncSelectedNoteNameAttribute();
       this.#updateMainButton();
       this.#updateSelectedButtonElementState();
-      this.#dispatchNoteSelectedEvent();
+      if (this.#selectedNoteName !== previousNoteName) {
+        this.#dispatchNoteSelectedEvent();
+      }
     }
   }
 
@@ -666,6 +727,10 @@ export class EnharmonicNoteSelector extends HTMLElement {
     }
   }
 
+  /**
+   * A private getter that returns the appropriate array of note groups
+   * based on the `rootNotesOnly` property.
+   */
   get #noteGroups() {
     return this.rootNotesOnly
       ? enharmonicRootNoteGroups

@@ -65,21 +65,21 @@ npm run bundle
 - **Event Handling:** Dispatches an `enharmonic-note-selected` event when the
   user makes a selection, providing the selected note name and note integer.
 - **Attributes and Properties:**
-  - `selected-note-name` attribute: Sets the initially selected note name.
-  - `selectedNoteName` property: Gets or sets the selected note name.
-  - `selectedNoteInteger` property (read-only): Gets the integer representation
-    of the selected note (0-11).
-  - `noteColorGroup` property: Sets an array of 12 color strings for theming.
-  - `root-notes-only` attribute: A boolean attribute that, when present,
-    restricts the selection to only standard root notes.
-- **Random Selection:** Includes a public method to programmatically select a
-  random note.
+  - `selected-note-name` / `selectedNoteName`: Gets or sets the selected note
+    name.
+  - `root-notes-only` / `rootNotesOnly`: A boolean that, when true, restricts
+    the selection to only standard root notes.
+  - `selectedNoteInteger` (read-only): Gets the integer representation of the
+    selected note (0-11).
+  - `noteColorGroup`: Gets or sets an array of 12 color strings for theming.
+- **Methods:**
+  - `setRandomNote()`: Programmatically selects a new, random note.
 
-## Styling with CSS Custom Properties
+## Styling and Customization
 
 The component's appearance can be customized in several ways.
 
-### Customizing Icons with Slots
+### Slots (for Icons)
 
 You can replace the default icons for the main button and the close button using
 HTML slots.
