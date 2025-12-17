@@ -576,11 +576,12 @@ export class EnharmonicNoteSelector extends HTMLElement {
       }
     }
 
+    this.#syncSelectedNoteNameAttribute();
+
     // Only update the button and attribute if the component is connected to the DOM
     if (this.isConnected) {
       this.#updateMainButton();
       this.#updateSelectedButtonElementState();
-      this.#syncSelectedNoteNameAttribute();
       this.#dispatchNoteSelectedEvent();
     }
   }
