@@ -146,10 +146,10 @@ enharmonic-note-selector::part(note-button) {
 }
 ```
 
-Style the "Clear Selection" button part using `::part(clear-button)`
+Style the "Clear Selection" button part using `::part(clear-selection-button)`
 
 ```css
-enharmonic-note-selector::part(clear-button) {
+enharmonic-note-selector::part(clear-selection-button) {
   border-radius: 0.5em;
   border: 0.2em solid white;
   box-shadow: 0 0 0.5em black;
