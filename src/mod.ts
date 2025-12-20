@@ -673,8 +673,6 @@ export class EnharmonicNoteSelector extends HTMLElement {
     // Only perform DOM updates and dispatch events if the component is connected
     // and the value has actually changed.
     if (this.isConnected) {
-      // Sync attribute immediately, as it's safe even if disconnected,
-      // but here we do it before dispatching the event.
       this.#syncSelectedNoteNameAttribute();
       this.#updateMainButton();
       this.#updateSelectedButtonElementState();
