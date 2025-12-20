@@ -295,7 +295,44 @@ export interface EnharmonicNoteSelectedEventDetail {
 
 /**
  * A web component for selecting a musical note from its enharmonic equivalents.
- * @fires enharmonic-note-selected - Dispatched when a note is selected by the user.
+ *
+ * @element enharmonic-note-selector
+ *
+ * @fires {CustomEvent<EnharmonicNoteSelectedEventDetail>} enharmonic-note-selected - Dispatched when a note is selected by the user.
+ *
+ * @attr {string} selected-note-name - The currently selected note name (e.g., "C♯").
+ * @attr {boolean} root-notes-only - If present, restricts selection to standard root notes.
+ *
+ * @prop {string | null} selectedNoteName - Gets or sets the selected note name.
+ * @prop {boolean} rootNotesOnly - Gets or sets whether to show only root notes.
+ * @prop {RootNoteInteger | null} selectedNoteInteger - (Read-only) The integer representation of the selected note (0-11).
+ * @prop {ColorGroup | null} noteColorGroup - Sets an array of 12 color strings for theming.
+ *
+ * @slot - The icon displayed in the main button when no note is selected.
+ * @slot close-dialog-icon - The icon displayed in the close dialog button.
+ *
+ * @csspart main-button - The main button that opens the dialog.
+ * @csspart dialog - The dialog element containing the note selection interface.
+ * @csspart close-dialog-button - The button to close the dialog.
+ * @csspart note-button - The buttons representing individual notes.
+ * @csspart clear-selection-button - The button to clear the current selection.
+ *
+ * @cssproperty [--main-icon-size=2.5ch] - The size of the icon in the main button.
+ * @cssproperty [--close-dialog-icon-size=2ch] - The size of the icon in the close button.
+ * @cssproperty [--dialog-backdrop-background=light-dark(rgb(255 255 255 / 50%), rgb(0 0 0 / 50%))] - The background of the dialog backdrop.
+ * @cssproperty [--default-spacing=0.5em] - The default spacing used within the dialog.
+ * @cssproperty [--note-color-0] - Background color for pitch 0.
+ * @cssproperty [--note-color-1] - Background color for pitch 1.
+ * @cssproperty [--note-color-2] - Background color for pitch 2.
+ * @cssproperty [--note-color-3] - Background color for pitch 3.
+ * @cssproperty [--note-color-4] - Background color for pitch 4.
+ * @cssproperty [--note-color-5] - Background color for pitch 5.
+ * @cssproperty [--note-color-6] - Background color for pitch 6.
+ * @cssproperty [--note-color-7] - Background color for pitch 7.
+ * @cssproperty [--note-color-8] - Background color for pitch 8.
+ * @cssproperty [--note-color-9] - Background color for pitch 9.
+ * @cssproperty [--note-color-10] - Background color for pitch 10.
+ * @cssproperty [--note-color-11] - Background color for pitch 11.
  */
 export class EnharmonicNoteSelector extends HTMLElement {
   #shadowRoot!: ShadowRoot;

@@ -146,6 +146,17 @@ enharmonic-note-selector::part(note-button) {
 }
 ```
 
+Style the "Close Dialog" button part using `::part(close-dialog-button)`
+
+```css
+enharmonic-note-selector::part(close-dialog-button) {
+  background: transparent;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  padding: 0.2em;
+}
+```
+
 Style the "Clear Selection" button part using `::part(clear-selection-button)`
 
 ```css
@@ -156,8 +167,8 @@ enharmonic-note-selector::part(clear-selection-button) {
 }
 ```
 
-The CSS Custom properties `--dialog-backdrop-background` and `--default-spacing`
-are also provided.
+The CSS Custom properties `--dialog-backdrop-background`, `--default-spacing`,
+`--main-icon-size`, and `--close-dialog-icon-size` are also provided.
 
 ### Adding Note Colors
 
