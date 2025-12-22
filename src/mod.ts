@@ -648,35 +648,39 @@ export class EnharmonicNoteSelector extends HTMLElement {
   }
 
   /**
-   * Sets the selected note.
-   * @param {string | null} newNote - The new note name to select, or null to clear the selection.
+   * Sets the currently selected note by its unique string.
+   * This will update the component's display and internal state. If a valid note name
+   * is provided, the corresponding `NoteName` object will be looked up
+   * and stored internally if valid, along with a corresponding `RootNoteInteger`.
+   * An invalid key is equivalent to setting the key to null.
+   * Setting to `null` clears the selection.
+   * @param {string | null} newNoteName - The new note name to select, or null to clear the selection.
    */
-  set selectedNoteName(newNote: string | null) {
-    if (this.#selectedNoteName === newNote) return;
+  set selectedNoteName(newNoteName: string | null) {
+    // Resolve the input to a valid key or null
+    const resolvedNoteInteger = this.#noteGroups.findIndex((group) =>
+      group.includes(newNoteName as NoteName)
+    ) as RootNoteInteger | -1;
+    const resolvedNoteName = newNoteName !== null &&
+        resolvedNoteInteger !== -1
+      ? newNoteName
+      : null;
 
-    // Reset values until proven valid
-    const previousNoteName = this.#selectedNoteName;
-    this.#selectedNoteName = null;
-    this.#selectedNoteInteger = null;
-
-    if (newNote !== null) {
-      const noteIndex = this.#noteGroups.findIndex((group) =>
-        group.includes(newNote as NoteName)
-      );
-
-      if (noteIndex !== -1) {
-        this.#selectedNoteInteger = noteIndex as RootNoteInteger;
-        this.#selectedNoteName = newNote;
-      }
+    const hasChanged = this.#selectedNoteName !== resolvedNoteName;
+    if (hasChanged) {
+      this.#selectedNoteName = resolvedNoteName;
+      this.#selectedNoteInteger = resolvedNoteName
+        ? resolvedNoteInteger as RootNoteInteger
+        : null;
     }
 
     // Only perform DOM updates and dispatch events if the component is connected
-    // and the value has actually changed.
     if (this.isConnected) {
+      // invalid values must sync attribute to null no matter what
       this.#syncSelectedNoteNameAttribute();
-      this.#updateMainButton();
-      this.#updateSelectedButtonElementState();
-      if (this.#selectedNoteName !== previousNoteName) {
+      if (hasChanged) {
+        this.#updateMainButton();
+        this.#updateSelectedButtonElementState();
         this.#dispatchNoteSelectedEvent();
       }
     }
