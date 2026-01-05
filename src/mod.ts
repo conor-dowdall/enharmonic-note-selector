@@ -385,6 +385,7 @@ export class EnharmonicNoteSelector extends HTMLElement {
   connectedCallback() {
     this.#populateEnharmonicNoteButtonsDiv();
     this.#addEventListeners();
+    this.#syncSelectedNoteNameAttribute();
     this.#updateSelectedButtonElementState();
     this.#updateMainButton();
   }
