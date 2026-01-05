@@ -678,6 +678,9 @@ export class EnharmonicNoteSelector extends HTMLElement {
     // Only perform DOM updates and dispatch events if the component is connected
     if (this.isConnected) {
       // invalid values must sync attribute to null no matter what
+      // e.g. A user or script sets the attribute to an invalid value
+      // <enharmonic-note-selector selected-note-name="InvalidValue">
+      // should be synced to null
       this.#syncSelectedNoteNameAttribute();
       if (hasChanged) {
         this.#updateMainButton();
